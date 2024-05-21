@@ -9,6 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import main.java.com.example.team10.DTO.UserDTO;
 import main.java.com.example.team10.util.JdbcUtil;
+import main.java.com.example.team10.util.SessionManager;
 
 public class UserDAOImpl implements UserDAO {
 	private Connection conn;
@@ -107,9 +108,15 @@ public class UserDAOImpl implements UserDAO {
                 loginUser.setCanReserve(res.getBoolean("canReserve"));
                 loginUser.setAdmin_id(res.getLong("admin_id"));
                 
-                // 구현 필요 --> 세션에 로그인 사용자 저장 후
-                conn.commit();
-			}
+                // 구현 필요 --> 세션에 로그인 사용자 저장 
+                // 세션에 로그인 사용자 저장
+                SessionManager.userAuthenticate(loginUser);
+                System.out.println("로그인 성공: " + loginUser.getName());
+            } else {
+                System.out.println("로그인 실패: 잘못된 ID 또는 비밀번호");
+            }
+
+            conn.commit(); // 트랜잭션 커밋
 		} catch(Exception e) {
 			if(conn != null) {
 				try {
@@ -123,5 +130,11 @@ public class UserDAOImpl implements UserDAO {
 			JdbcUtil.close(pStmt);
 		}
 		return loginUser;
+	}
+	
+	// 사용자 로그아웃
+	@Override
+	public void logout() {
+		SessionManager.userLogout();
 	}
 }

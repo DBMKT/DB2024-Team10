@@ -7,4 +7,6 @@ public interface UserDAO {
     String signup(UserDTO newUser); // 회원가입
 	
     UserDTO login(long id, String password); // 로그인
+    
+    void logout();
 }

@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import main.java.com.example.team10.DTO.AdministratorDTO;
 import main.java.com.example.team10.DTO.UserDTO;
 import main.java.com.example.team10.util.JdbcUtil;
+import main.java.com.example.team10.util.SessionManager;
 
 public class AdministratorDAOImpl implements AdministratorDAO {
 	private Connection conn;
@@ -37,7 +38,12 @@ public class AdministratorDAOImpl implements AdministratorDAO {
                 loginAdmin.setPassword(res.getString("password"));
                 loginAdmin.setContact(res.getString("contact"));
                 // 세션 문제 --> 세션에 로그인한 관리자 정보 저장
-			}
+                SessionManager.adminAuthenticate(loginAdmin);
+                System.out.println("로그인 성공: " + loginAdmin.getContact());
+            } else {
+                System.out.println("로그인 실패: 잘못된 ID 또는 비밀번호");
+            }
+			
 			conn.commit(); // 트랜잭션 커밋
         } catch (SQLException e) {
             if (conn != null) {
@@ -90,6 +96,11 @@ public class AdministratorDAOImpl implements AdministratorDAO {
 		} finally {
 			JdbcUtil.close(pStmt);
 		}
+	}
+	
+	@Override // 관리자 로그아웃
+	public void logout() {
+		SessionManager.adminLogout();
 	}
 
 }
