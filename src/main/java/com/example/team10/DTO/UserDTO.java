@@ -11,6 +11,22 @@ public class UserDTO {
 	private long admin_id;		// 회원을 관리하는 관리자 id. 
 								// 회원:관리자=1:N 관계
 	
+	// 회원가입 시 생성자: 필수 필드만 포함
+    public UserDTO(long id, String password, String major, String email, String name, String phoneNum) {
+        this.id = id;
+        this.password = password;
+        this.major = major;
+        this.email = email;
+        this.name = name;
+        this.phoneNum = phoneNum;
+        this.canReserve = true; // 기본값 설정
+        this.admin_id = 0; // 기본값 설정 (추후 설정)
+    }
+    // 기본 생성자- 파라미터 X
+    public UserDTO() {
+    	
+    }
+    
 	/* User의 각 필드값에 대한 getter, setter 정의 */
 	public long getId() {
 		return id;

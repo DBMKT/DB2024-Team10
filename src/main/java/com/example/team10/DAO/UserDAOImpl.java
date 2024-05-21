@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.concurrent.ThreadLocalRandom;
+
 import main.java.com.example.team10.DTO.UserDTO;
 import main.java.com.example.team10.util.JdbcUtil;
 
@@ -26,7 +28,7 @@ public class UserDAOImpl implements UserDAO {
 			conn.setAutoCommit(false);	// 자동 커밋 비활성화
 			
 			// 중복 회원인지 먼저 확인해주는 작업 필요
-			pStmt = conn.prepareStatement("SELECT * from User WHERE id = ?");
+			pStmt = conn.prepareStatement("SELECT * from db2024_user WHERE id = ?");
 			pStmt.setLong(1, newUser.getId());
 			res = pStmt.executeQuery();
 			
@@ -39,7 +41,8 @@ public class UserDAOImpl implements UserDAO {
 			
 			long randomAdmin = getRandomNumberInRange(99999991L, 99999994L);
 
-			String sql = "INSERT INTO User(id, password, major, email, name, phone_num, canReserve, admin_id) "
+			// (id, password, admin_id, email, name, major, phone_num) 
+			String sql = "INSERT INTO db2024_user(id, password, major, email, name, phone_num, canReserve, admin_id) "
 					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 			pStmt = conn.prepareStatement(sql);
 			pStmt.setLong(1, newUser.getId());
@@ -48,14 +51,17 @@ public class UserDAOImpl implements UserDAO {
 			pStmt.setString(4, newUser.getEmail());
 			pStmt.setString(5, newUser.getName());
 			pStmt.setString(6, newUser.getPhoneNum());
-			pStmt.setInt(7, 1);
+			pStmt.setBoolean(7,newUser.isCanReserve());
 			pStmt.setLong(8, randomAdmin); // 사용자를 관리할 관리자 랜덤 지정
 			
 			int rowsAffected = pStmt.executeUpdate();
 			if(rowsAffected > 0) {
-				return "회원가입에 성공하였습니다.";
+				conn.commit();
+				String welcomeName = newUser.getName();
+				return welcomeName+"님, 회원가입에 성공하였습니다.";
 			}
 			else {
+				conn.rollback();
 				return "회원가입에 실패하였습니다.";
 			}
 		}
@@ -67,24 +73,26 @@ public class UserDAOImpl implements UserDAO {
 			return "회원가입 중 알 수 없는 오류가 발생하였습니다." + e.getMessage();
 		}
 		finally {
-			if(res != null) JdbcUtil.close(res);
-			if(pStmt != null) JdbcUtil.close(pStmt);
+			JdbcUtil.close(res);
+			JdbcUtil.close(pStmt);
 		}
 	}
 	
-	private long getRandomNumberInRange(long l, long m) {
-		return 0;
-	}
+    private long getRandomNumberInRange(long min, long max) {
+        return ThreadLocalRandom.current().nextLong(min, max + 1);
+    }
 
 	@Override
-	// 로그인 
+	// 로그인 메서드: null 값 반환 시에는 잘못된 ID/비밀번호라고 입력
 	public UserDTO login(long id, String password) {
 		
 		UserDTO loginUser = null;
 		PreparedStatement pStmt = null;
 		ResultSet res = null;
 		try {
-			pStmt = conn.prepareStatement("SELECT * FROM User WHERE id = ? AND password = ?");
+			conn.setAutoCommit(false); // 트랜잭션 시작
+			
+			pStmt = conn.prepareStatement("SELECT * FROM db2024_user WHERE id = ? AND password = ?");
 			pStmt.setLong(1, id);
 			pStmt.setString(2, password);
 			res = pStmt.executeQuery();
@@ -98,17 +106,21 @@ public class UserDAOImpl implements UserDAO {
                 loginUser.setPhoneNum(res.getString("phone_num"));
                 loginUser.setCanReserve(res.getBoolean("canReserve"));
                 loginUser.setAdmin_id(res.getLong("admin_id"));
+                
+                // 구현 필요 --> 세션에 로그인 사용자 저장 후
+                conn.commit();
 			}
 		} catch(Exception e) {
-			e.printStackTrace();
+			if(conn != null) {
+				try {
+					conn.rollback();
+				} catch(SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
 		} finally {
-			try {
-				if(res != null) JdbcUtil.close(res);
-				if(pStmt != null) JdbcUtil.close(pStmt);
-			}
-			catch(Exception e) {
-				e.printStackTrace();
-			}
+			JdbcUtil.close(res);
+			JdbcUtil.close(pStmt);
 		}
 		return loginUser;
 	}
