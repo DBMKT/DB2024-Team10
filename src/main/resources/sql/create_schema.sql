@@ -3,7 +3,7 @@ create database db2024;
 use db2024;
 
 # Database user 생성 + 권한 부여
-# create user 'db2024'@localhost identified by 'db2024';
+#create user 'db2024'@localhost identified by 'db2024';
 grant all privileges on db2024.* to 'db2024'@localhost;
 
 # 관리자 테이블 생성
@@ -17,12 +17,15 @@ CREATE TABLE db2024_Administrator(
 # 사용자 테이블 생성
 CREATE TABLE db2024_User(
     id BIGINT NOT NULL,
+    admin_id BIGINT,
     password VARCHAR(20) NOT NULL,
+    canReserve TINYINT(1) NOT NULL DEFAULT 1, 
     email VARCHAR(50) NOT NULL,
     name VARCHAR(20) NOT NULL,
     major VARCHAR(20) NOT NULL,
     phone_num VARCHAR(13),
-    PRIMARY KEY(id)
+    PRIMARY KEY(id),
+	FOREIGN KEY (admin_id) REFERENCES db2024_Administrator(id) ON DELETE SET NULL
 );
 
 # 강의실 테이블 생성
