@@ -1,0 +1,115 @@
+package main.java.com.example.team10.DAO;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import main.java.com.example.team10.DTO.UserDTO;
+import main.java.com.example.team10.util.JdbcUtil;
+
+public class UserDAOImpl implements UserDAO {
+	private Connection conn;
+    public UserDAOImpl() {
+        this.conn = JdbcUtil.getConnection();
+    }
+
+	// 회원가입
+    @Override
+	public String signup(UserDTO newUser) {
+		
+		//UserDTO newUser = null;
+		PreparedStatement pStmt = null;
+		ResultSet res = null;
+
+		try {
+			conn.setAutoCommit(false);	// 자동 커밋 비활성화
+			
+			// 중복 회원인지 먼저 확인해주는 작업 필요
+			pStmt = conn.prepareStatement("SELECT * from User WHERE id = ?");
+			pStmt.setLong(1, newUser.getId());
+			res = pStmt.executeQuery();
+			
+			if(res.next()) {
+				return "이미 가입한 사용자입니다. 다른 id를 사용해주세요.";
+			}
+			JdbcUtil.close(res);
+			JdbcUtil.close(pStmt);
+			
+			
+			long randomAdmin = getRandomNumberInRange(99999991L, 99999994L);
+
+			String sql = "INSERT INTO User(id, password, major, email, name, phone_num, canReserve, admin_id) "
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+			pStmt = conn.prepareStatement(sql);
+			pStmt.setLong(1, newUser.getId());
+			pStmt.setString(2, newUser.getPassword());
+			pStmt.setString(3, newUser.getMajor());
+			pStmt.setString(4, newUser.getEmail());
+			pStmt.setString(5, newUser.getName());
+			pStmt.setString(6, newUser.getPhoneNum());
+			pStmt.setInt(7, 1);
+			pStmt.setLong(8, randomAdmin); // 사용자를 관리할 관리자 랜덤 지정
+			
+			int rowsAffected = pStmt.executeUpdate();
+			if(rowsAffected > 0) {
+				return "회원가입에 성공하였습니다.";
+			}
+			else {
+				return "회원가입에 실패하였습니다.";
+			}
+		}
+		catch(SQLIntegrityConstraintViolationException e) {
+			return "이미 가입한 사용자입니다. 다른 ID를 사용해주세요.";
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			return "회원가입 중 알 수 없는 오류가 발생하였습니다." + e.getMessage();
+		}
+		finally {
+			if(res != null) JdbcUtil.close(res);
+			if(pStmt != null) JdbcUtil.close(pStmt);
+		}
+	}
+	
+	private long getRandomNumberInRange(long l, long m) {
+		return 0;
+	}
+
+	@Override
+	// 로그인 
+	public UserDTO login(long id, String password) {
+		
+		UserDTO loginUser = null;
+		PreparedStatement pStmt = null;
+		ResultSet res = null;
+		try {
+			pStmt = conn.prepareStatement("SELECT * FROM User WHERE id = ? AND password = ?");
+			pStmt.setLong(1, id);
+			pStmt.setString(2, password);
+			res = pStmt.executeQuery();
+			if(res.next()) { // 로그인 성공 시
+				loginUser = new UserDTO();
+                loginUser.setId(res.getLong("id"));
+                loginUser.setPassword(res.getString("password"));
+                loginUser.setEmail(res.getString("email"));
+                loginUser.setName(res.getString("name"));
+                loginUser.setMajor(res.getString("major"));
+                loginUser.setPhoneNum(res.getString("phone_num"));
+                loginUser.setCanReserve(res.getBoolean("canReserve"));
+                loginUser.setAdmin_id(res.getLong("admin_id"));
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(res != null) JdbcUtil.close(res);
+				if(pStmt != null) JdbcUtil.close(pStmt);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return loginUser;
+	}
+}
