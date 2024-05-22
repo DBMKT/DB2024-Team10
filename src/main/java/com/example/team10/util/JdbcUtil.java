@@ -11,8 +11,8 @@ public class JdbcUtil {
 		final String DB_URL = "jdbc:mysql://localhost/db2024";
 		//Database credentials
 		//MySQL 계정과 암호 입력
-		final String USER = "mysql ID";
-		final String PASS = "mysql PW";
+		final String USER = "mysql id";
+		final String PASS = "mysql pw";
 
 		try {
 			Class.forName(JDBC_DRIVER);

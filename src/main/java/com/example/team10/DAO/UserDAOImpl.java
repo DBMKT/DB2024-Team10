@@ -128,6 +128,11 @@ public class UserDAOImpl implements UserDAO {
 		} finally {
 			JdbcUtil.close(res);
 			JdbcUtil.close(pStmt);
+			try {
+				conn.setAutoCommit(true); // 트랜잭션 종료
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return loginUser;
 	}

@@ -56,32 +56,45 @@ public class AdministratorDAOImpl implements AdministratorDAO {
         } finally {
             JdbcUtil.close(res);
             JdbcUtil.close(pStmt);
+            try {
+            	conn.setAutoCommit(true); // 트랜잭션 종료
+            } catch(SQLException e) {
+            	e.printStackTrace();
+            }
         }
 		return loginAdmin;
 	}
 	
 	@Override
-	public void updateUserInfo(UserDTO user) {
+	public void updateUserInfo(UserDTO targetUser) {
 		// 관리자 자신의 담당 사용자의 예약 권한 조정
 		PreparedStatement pStmt = null;
 		
 		try {
 			conn.setAutoCommit(false); // 트랜잭션 시작
 			
-			String sql = "UPDATE db2024_User SET canReserve = ? WHERE id = ? AND admin_id = ?";
-			pStmt = conn.prepareStatement(sql);
-			pStmt.setBoolean(1, user.isCanReserve());
-			pStmt.setLong(2, user.getId());
-			pStmt.setLong(3, user.getAdmin_id());
-			
-			int rowsAffected = pStmt.executeUpdate();
-			if(rowsAffected > 0) {
-				conn.commit(); // 업데이트 성공 --> 트랜잭션 커밋
-				System.out.println("예약권한이 성공적으로 업데이트되었습니다.");
+			if(SessionManager.getCurrentAdmin().getId() != targetUser.getAdmin_id()) {
+				// 예외처리 먼저 --> 현재 로그인한 관리자의 담당 유저가 아닌 유저에 대해 접근할 경우
+				conn.rollback();
+				System.out.println("해당 사용자에 대한 접근 권한이 없습니다.");
+				return;
 			}
 			else {
-				conn.rollback(); // 실패 시 롤백
-				System.out.println("예약 권한 업데이트에 실패하였습니다.");
+				String sql = "UPDATE db2024_User SET canReserve = ? WHERE id = ? AND admin_id = ?";
+				pStmt = conn.prepareStatement(sql);
+				pStmt.setBoolean(1, targetUser.isCanReserve());
+				pStmt.setLong(2, targetUser.getId());
+				pStmt.setLong(3, targetUser.getAdmin_id());
+
+				int rowsAffected = pStmt.executeUpdate();
+				if(rowsAffected > 0) {
+					conn.commit(); // 업데이트 성공 --> 트랜잭션 커밋
+					System.out.println("예약권한이 성공적으로 업데이트되었습니다.");
+				}
+				else {
+					conn.rollback(); // 실패 시 롤백
+					System.out.println("예약 권한 업데이트에 실패하였습니다.");
+				}
 			}
 		} catch(SQLException e) {
 			if(conn != null) {
@@ -94,7 +107,14 @@ public class AdministratorDAOImpl implements AdministratorDAO {
 			e.printStackTrace();
 			System.out.println("예약 권한 업데이트 중 알 수 없는 오류가 발생하였습니다.");
 		} finally {
-			JdbcUtil.close(pStmt);
+			if(pStmt != null) {
+				JdbcUtil.close(pStmt);
+			}
+			try {
+				conn.setAutoCommit(true); // 트랜잭션 종료
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
