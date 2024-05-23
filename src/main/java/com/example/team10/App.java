@@ -1,7 +1,10 @@
 package main.java.com.example.team10;
-import main.java.com.example.team10.DAO.*;
-import main.java.com.example.team10.DTO.*;
-import main.java.com.example.team10.util.SessionManager;
+
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
+import main.java.com.example.team10.GUI.Home;
+import main.java.com.example.team10.GUI.LoginForm;
 
 public class App {
 
@@ -69,6 +72,12 @@ public class App {
 //        } else {
 //            System.out.println("관리자 로그아웃 실패");
 //        }
-  
-	}
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+            	new Home();
+            }
+        });
+    }
 }
+
