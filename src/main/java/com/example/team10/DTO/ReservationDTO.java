@@ -11,17 +11,13 @@ public class ReservationDTO {
     private int course_no; 	// 학수번호
     private int class_no;// 분반
     private Date date;	// 예약 날짜
-    private PeriodType period;	// 예약 교시
+    private int period;	// 예약 교시
     private String reason;  // 목적
     private int people_num;		// 사용 인원
     private Date created_date;  // 예약 요청 시간
 
-    public ReservationDTO(long reserve_id) {
-    	this.reserve_id = reserve_id;
-    	
-    }
     public  ReservationDTO(long reserve_id, long room_id, long admin_id, long user_id,
-                           int course_no, int class_no, Date date, PeriodType period, String reason, int people_num, Date created_date) {
+                           int course_no, int class_no, Date date, int period, String reason, int people_num, Date created_date) {
         this.reserve_id = reserve_id;
         this.room_id = room_id;
         this.admin_id = admin_id;
@@ -78,10 +74,10 @@ public class ReservationDTO {
     public void setDate(Date date) {
         this.date = date;
     }
-    public PeriodType getPeriod() {
+    public int getPeriod() {
         return period;
     }
-    public void setPeriod(PeriodType period) {
+    public void setPeriod(int period) {
         this.period = period;
     }
     public String getReason() {
