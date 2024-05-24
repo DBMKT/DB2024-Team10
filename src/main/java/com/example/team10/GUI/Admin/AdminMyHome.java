@@ -6,13 +6,15 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import main.java.com.example.team10.DAO.AdministratorDAO;
+import main.java.com.example.team10.DAO.AdministratorDAOImpl;
 import main.java.com.example.team10.DTO.AdministratorDTO;
 import main.java.com.example.team10.GUI.Home;
 
 public class AdminMyHome extends JFrame {
 
     private AdministratorDTO admin;
-
+    private AdministratorDAO adminImpl;
     private JLabel lblWelcome;
     private JButton btnUserManagement;
     private JButton btnReservationManagement;
@@ -29,9 +31,10 @@ public class AdminMyHome extends JFrame {
                     JOptionPane.ERROR_MESSAGE);
             System.exit(0); // 종료
         }
+        adminImpl = new AdministratorDAOImpl();
         init();
         setDisplay();
-//        addListeners();
+        addListeners();
         showFrame();
     }
 
@@ -42,7 +45,6 @@ public class AdminMyHome extends JFrame {
         btnReservationManagement = new JButton("예약 내역 관리");
         
         btnLogout = new JButton("로그아웃");
-        btnLogout.setForeground(Color.RED); // 버튼 텍스트를 빨간색으로 설정
         btnBack = new JButton("이전");
         btnMyHome = new JButton("My홈");
         
@@ -102,7 +104,7 @@ public class AdminMyHome extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 로그아웃 처리
-                SessionManager.adminLogout();
+                adminImpl.logout();
                 dispose(); // 현재 창 닫기
                 new Home(); // 홈 화면 열기
             }
@@ -112,6 +114,7 @@ public class AdminMyHome extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 이전 화면으로 돌아가기
+            	adminImpl.logout();
                 dispose(); // 현재 창 닫기
                 new Home(); // 홈 화면 열기
             }
@@ -147,8 +150,8 @@ public class AdminMyHome extends JFrame {
         });
     }
     public void showFrame() {
-        setTitle("Admin Home");
-        setSize(600, 400);
+        setTitle("관리자 my 홈");
+        setSize(500, 200);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);

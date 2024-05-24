@@ -3,17 +3,19 @@ package main.java.com.example.team10;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import main.java.com.example.team10.DAO.AdministratorDAOImpl;
+import main.java.com.example.team10.DTO.AdministratorDTO;
 import main.java.com.example.team10.GUI.Home;
 import main.java.com.example.team10.GUI.LoginForm;
+import main.java.com.example.team10.util.SessionManager;
 
 public class App {
 
 	public static void main(String[] args) {
 //		// TODO Auto-generated method stub
-		/*
-		 * UserDAO userDAO = new UserDAOImpl(); AdministratorDAO adminDAO = new
-		 * AdministratorDAOImpl();
-		 */
+		
+		  //UserDAO userDAO = new UserDAOImpl(); 
+		  AdministratorDAOImpl adminDAO = new AdministratorDAOImpl();
 //		
 //		// 사용자 회원가입 test 코드
 //		//     public UserDTO(long id, String password, String major, String email, String name, String phoneNum) {
@@ -39,18 +41,19 @@ public class App {
 //      }
 		
         // 관리자 로그인 test 코드
-		/*
-		 * AdministratorDTO admin = adminDAO.adminLogin(99999992, "rhksflwk2"); if
-		 * (admin != null) { System.out.println("관리자 로그인 성공: " + admin.getContact()); }
-		 * else { System.out.println("관리자 로그인 실패: 잘못된 ID 또는 비밀번호"); }
-		 */
+		
+		  AdministratorDTO admin = adminDAO.adminLogin(99999992, "rhksflwk2"); if
+		  (admin != null) { System.out.println("관리자 로그인 성공: " + admin.getContact()); }
+		  else { System.out.println("관리자 로그인 실패: 잘못된 ID 또는 비밀번호"); }
+		 
         
         // Check if admin is logged in
-		/*
-		 * if (SessionManager.isAdminLoggedIn()) { System.out.println("관리자 세션 유지 중: " +
-		 * ((AdministratorDTO) SessionManager.getCurrentAdmin()).getContact()); } else {
-		 * System.out.println("관리자 세션 유지 실패"); }
-		 */
+		
+		  if (SessionManager.isAdminLoggedIn()) { System.out.println("관리자 세션 유지 중: " +
+		  ((AdministratorDTO) SessionManager.getCurrentAdmin()).getContact()); } else {
+		  System.out.println("관리자 세션 유지 실패"); }
+		
+		 
 
        // 관리자 --> 사용자 권한 조정 (블락)
 		/*
@@ -59,6 +62,10 @@ public class App {
 		 * loginUser.setCanReserve(true); } adminDAO.updateUserInfo(loginUser); }
 		 */
        
+		  // 관리자 --> 예약 내역 조정
+			/*
+			 * if(admin != null) { admin.deleteReservationInfo(); }
+			 */
 		/*
 		 * if (SessionManager.isAdminLoggedIn()) { System.out.println("관리자 세션 유지 중: " +
 		 * ((AdministratorDTO) SessionManager.getCurrentAdmin()).getContact()); } else {

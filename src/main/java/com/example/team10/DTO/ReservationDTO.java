@@ -16,7 +16,10 @@ public class ReservationDTO {
     private int people_num;		// 사용 인원
     private Date created_date;  // 예약 요청 시간
 
-
+    public ReservationDTO(long reserve_id) {
+    	this.reserve_id = reserve_id;
+    	
+    }
     public  ReservationDTO(long reserve_id, long room_id, long admin_id, long user_id,
                            int course_no, int class_no, Date date, PeriodType period, String reason, int people_num, Date created_date) {
         this.reserve_id = reserve_id;
