@@ -1,5 +1,7 @@
 package main.java.com.example.team10.DAO;
 
+import java.util.List;
+
 import main.java.com.example.team10.DTO.UserDTO;
 
 public interface UserDAO {
@@ -9,4 +11,7 @@ public interface UserDAO {
     UserDTO login(long id, String password); // 로그인
     
     void logout();
+    
+	List<UserDTO> getUserListByAdminId(long adminId);
+
 }

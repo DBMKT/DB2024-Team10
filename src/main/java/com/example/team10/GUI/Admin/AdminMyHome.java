@@ -14,7 +14,7 @@ import main.java.com.example.team10.GUI.Home;
 public class AdminMyHome extends JFrame {
 
     private AdministratorDTO admin;
-    private AdministratorDAO adminImpl;
+    private AdministratorDAO adminDAO;
     private JLabel lblWelcome;
     private JButton btnUserManagement;
     private JButton btnReservationManagement;
@@ -31,7 +31,7 @@ public class AdminMyHome extends JFrame {
                     JOptionPane.ERROR_MESSAGE);
             System.exit(0); // 종료
         }
-        adminImpl = new AdministratorDAOImpl();
+        adminDAO = new AdministratorDAOImpl();
         init();
         setDisplay();
         addListeners();
@@ -104,7 +104,7 @@ public class AdminMyHome extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 로그아웃 처리
-                adminImpl.logout();
+                adminDAO.logout();
                 dispose(); // 현재 창 닫기
                 new Home(); // 홈 화면 열기
             }
@@ -114,7 +114,7 @@ public class AdminMyHome extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 이전 화면으로 돌아가기
-            	adminImpl.logout();
+            	adminDAO.logout();
                 dispose(); // 현재 창 닫기
                 new Home(); // 홈 화면 열기
             }
@@ -130,10 +130,8 @@ public class AdminMyHome extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 예약 관리 화면으로 전환 (예시로 간단한 메시지 박스를 띄움)
-                JOptionPane.showMessageDialog(AdminMyHome.this,
-                        "사용자 관리 화면 구현 아직 구현 하지 않음",
-                        "사용자 관리",
-                        JOptionPane.INFORMATION_MESSAGE);
+                		dispose(); // 현재 창 닫기
+                		new UserManagement(); // 홈 화면 열기
         	}
     	});
        
