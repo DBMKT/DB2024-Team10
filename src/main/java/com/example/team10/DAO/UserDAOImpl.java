@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import main.java.com.example.team10.DTO.UserDTO;
@@ -135,6 +137,32 @@ public class UserDAOImpl implements UserDAO {
 			}
 		}
 		return loginUser;
+	}
+	
+	@Override
+	public List<UserDTO> getUserListByAdminId(long adminId){
+		List<UserDTO> users = new ArrayList<>();
+		String sql = "SELECT * FROM db2024_User WHERE admin_id=?";
+		
+        try (PreparedStatement pStmt = conn.prepareStatement(sql)) {
+            pStmt.setLong(1, adminId);
+            ResultSet rs = pStmt.executeQuery();
+
+            while (rs.next()) {
+                UserDTO user = new UserDTO();
+                user.setId(rs.getLong("id"));
+                user.setName(rs.getString("name"));
+                user.setMajor(rs.getString("major"));
+                user.setEmail(rs.getString("email"));
+                user.setPhoneNum(rs.getString("phone_num"));
+                user.setCanReserve(rs.getBoolean("canReserve"));
+                user.setAdmin_id(adminId);
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
 	}
 	
 	// 사용자 로그아웃
