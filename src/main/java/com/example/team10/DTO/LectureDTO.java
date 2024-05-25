@@ -1,5 +1,7 @@
 package main.java.com.example.team10.DTO;
 
+import main.java.com.example.team10.DTO.enums.DayType;
+
 public class LectureDTO {
 
     private int course_no; 			// 학수번호
@@ -8,12 +10,12 @@ public class LectureDTO {
     private int quota;		// 수강 인원
     private DayType day1_of_week;	// 강의 요일 1
     private DayType day2_of_week;		// 강의 요일 2
-    private PeriodType period;      // 강의 교시 1
-    private PeriodType period2;		// 강의 교시 2
+    private int period;      // 강의 교시 1
+    private int period2;		// 강의 교시 2
     private long room_id;	// 강의실 id
 
 
-    public  LectureDTO(int course_no, int class_no, String prof, int quota, DayType day1_of_week, DayType day2_of_week, PeriodType period, PeriodType period2, long room_id) {
+    public  LectureDTO(int course_no, int class_no, String prof, int quota, DayType day1_of_week, DayType day2_of_week, int period, int period2, long room_id) {
         this.course_no = course_no;
         this.class_no = class_no;
         this.prof = prof;
@@ -62,16 +64,16 @@ public class LectureDTO {
     public void setDay2OfWeek(DayType day2_of_week) {
         this.day2_of_week = day2_of_week;
     }
-    public PeriodType getPeriod() {
+    public int getPeriod() {
         return period;
     }
-    public void setPeriod(PeriodType period) {
+    public void setPeriod(int period) {
         this.period = period;
     }
-    public PeriodType getPeriod2() {
+    public int getPeriod2() {
         return period2;
     }
-    public void setPeriod2(PeriodType period2) {
+    public void setPeriod2(int period2) {
         this.period2 = period2;
     }
     public long getRoomId() {
