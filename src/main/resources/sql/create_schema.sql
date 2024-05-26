@@ -1,9 +1,9 @@
 # Database 생성
-create database db2024;
+#create database db2024;
 use db2024;
 
 # Database user 생성 + 권한 부여
-#create user 'db2024'@localhost identified by 'db2024';
+create user 'db2024'@localhost identified by 'db2024';
 grant all privileges on db2024.* to 'db2024'@localhost;
 
 # 관리자 테이블 생성
