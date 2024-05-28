@@ -31,7 +31,7 @@ public class AdministratorDAOImpl implements AdministratorDAO {
 		try {
 			conn.setAutoCommit(false); // 트랜잭션 시작
 
-			pStmt = conn.prepareStatement("SELECT * FROM db2024_administrator WHERE id = ? AND password = ?");
+			pStmt = conn.prepareStatement("SELECT * FROM db2024_Administrator WHERE id = ? AND password = ?");
 			pStmt.setLong(1, id);
 			pStmt.setString(2, password);
 			res = pStmt.executeQuery();
@@ -128,7 +128,7 @@ public class AdministratorDAOImpl implements AdministratorDAO {
 		
 		try {
 			conn.setAutoCommit(false); //트랜잭션 시작
-			String sql = "DELETE from db2024_Reservation WHERE id = ?";
+			String sql = "DELETE from db2024_Reservation WHERE reserved_id = ?";
 			pStmt = conn.prepareStatement(sql);
 			pStmt.setLong(1, reservation.getReserveId());
 			
