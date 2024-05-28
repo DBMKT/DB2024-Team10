@@ -6,21 +6,23 @@ public class LectureDTO {
     private int class_no;	// 분반
     private String prof; // 교수 이름
     private int quota;		// 수강 인원
-    private DayType day1_of_week;	// 강의 요일 1
-    private DayType day2_of_week;		// 강의 요일 2
-    private PeriodType period;      // 강의 교시 1
-    private PeriodType period2;		// 강의 교시 2
+    private int day1_of_week;	// 강의 요일 1
+    private int day2_of_week;		// 강의 요일 2
+    private int period1;      // 강의 교시 1
+    private int period2;		// 강의 교시 2
     private long room_id;	// 강의실 id
 
 
-    public  LectureDTO(int course_no, int class_no, String prof, int quota, DayType day1_of_week, DayType day2_of_week, PeriodType period, PeriodType period2, long room_id) {
+    public  LectureDTO(int course_no, int class_no, String prof,
+                       int quota, int day1_of_week, int day2_of_week, int period1,
+                       int period2, long room_id) {
         this.course_no = course_no;
         this.class_no = class_no;
         this.prof = prof;
         this.quota = quota;
         this.day1_of_week = day1_of_week;
         this.day2_of_week = day2_of_week;
-        this.period = period;
+        this.period1 = period1;
         this.period2 = period2;
         this.room_id = room_id;
     }
@@ -50,28 +52,28 @@ public class LectureDTO {
     public void setQuota(int quota) {
         this.quota = quota;
     }
-    public DayType getDay1OfWeek() {
+    public int getDay1OfWeek() {
         return day1_of_week;
     }
-    public void setDay1OfWeek(DayType day1_of_week) {
+    public void setDay1OfWeek(int day1_of_week) {
         this.day1_of_week = day1_of_week;
     }
-    public DayType getDay2OfWeek() {
+    public int getDay2OfWeek() {
         return day2_of_week;
     }
-    public void setDay2OfWeek(DayType day2_of_week) {
+    public void setDay2OfWeek(int day2_of_week) {
         this.day2_of_week = day2_of_week;
     }
-    public PeriodType getPeriod() {
-        return period;
+    public int getPeriod1() {
+        return period1;
     }
-    public void setPeriod(PeriodType period) {
-        this.period = period;
+    public void setPeriod1(int period1) {
+        this.period1 = period1;
     }
-    public PeriodType getPeriod2() {
+    public int getPeriod2() {
         return period2;
     }
-    public void setPeriod2(PeriodType period2) {
+    public void setPeriod2(int period2) {
         this.period2 = period2;
     }
     public long getRoomId() {
