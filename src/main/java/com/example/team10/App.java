@@ -5,6 +5,7 @@ import javax.swing.SwingUtilities;
 
 import main.java.com.example.team10.DAO.AdministratorDAOImpl;
 import main.java.com.example.team10.DTO.AdministratorDTO;
+import main.java.com.example.team10.DTO.UserDTO;
 import main.java.com.example.team10.GUI.Home;
 import main.java.com.example.team10.GUI.LoginForm;
 import main.java.com.example.team10.util.SessionManager;
@@ -53,7 +54,11 @@ public class App {
 		  ((AdministratorDTO) SessionManager.getCurrentAdmin()).getContact()); } else {
 		  System.out.println("관리자 세션 유지 실패"); }
 		
-		 
+		 // 사용자 체크
+		if (SessionManager.isUserLoggedIn()){ System.out.println("이용자 세션 유지 중: " +
+				((UserDTO) SessionManager.getCurrentUser()).getPhoneNum());} else {
+			System.out.println("이용자 세션 유지 실패");
+		}
 
        // 관리자 --> 사용자 권한 조정 (블락)
 		/*

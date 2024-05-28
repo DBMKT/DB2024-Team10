@@ -10,14 +10,22 @@ public class ReservationDTO {
     private String user_name; // 이용자 이름
     private int course_no; 	// 학수번호
     private int class_no;// 분반
+<<<<<<< HEAD
     private Date reserve_date;	// 예약 날짜
+=======
+    private Date date;	// 예약 날짜
+>>>>>>> 032f62ed5a9bbd543f4855580ef856eb56d90c24
     private int period;	// 예약 교시
     private String reason;  // 목적
     private int people_num;		// 사용 인원
     private Date created_date;  // 예약 요청 시간
 
     public  ReservationDTO(long reserve_id, long room_id, long admin_id, long user_id,
+<<<<<<< HEAD
                            int course_no, int class_no, Date reserve_date, int period, String reason, int people_num, Date created_date) {
+=======
+                           int course_no, int class_no, Date date, int period, String reason, int people_num, Date created_date) {
+>>>>>>> 032f62ed5a9bbd543f4855580ef856eb56d90c24
         this.reserve_id = reserve_id;
         this.room_id = room_id;
         this.admin_id = admin_id;
