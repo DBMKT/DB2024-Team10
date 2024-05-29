@@ -5,20 +5,20 @@ public class UserDTO {
 	private String password;	// 회원 비밀번호
 	private boolean canReserve; // 예약 권한(예약 가능한 사용자/예약 불가한 사용자)
 	private String email;		// 이메일 주소
-	private String phoneNum;	// 전화번호
+	private String phone_num;	// 전화번호
 	private String major;		// 학과
 	private String name;		// 이름
 	private long admin_id;		// 회원을 관리하는 관리자 id. 
 								// 회원:관리자=1:N 관계
 	
 	// 회원가입 시 생성자: 필수 필드만 포함
-    public UserDTO(long id, String password, String major, String email, String name, String phoneNum) {
+    public UserDTO(long id, String password, String major, String email, String name, String phone_num) {
         this.id = id;
         this.password = password;
         this.major = major;
         this.email = email;
         this.name = name;
-        this.phoneNum = phoneNum;
+        this.phone_num = phone_num;
         this.canReserve = true; // 기본값 설정
         this.admin_id = 0; // 기본값 설정 (추후 설정)
     }
@@ -53,10 +53,10 @@ public class UserDTO {
 		this.email = email;
 	}
 	public String getPhoneNum() {
-		return phoneNum;
+		return phone_num;
 	}
-	public void setPhoneNum(String phoneNum) {
-		this.phoneNum = phoneNum;
+	public void setPhoneNum(String phone_num) {
+		this.phone_num = phone_num;
 	}
 	
 	public long getAdmin_id() {

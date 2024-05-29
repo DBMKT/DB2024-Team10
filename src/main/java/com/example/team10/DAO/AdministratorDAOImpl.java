@@ -132,7 +132,7 @@ public class AdministratorDAOImpl implements AdministratorDAO {
 	    try {
 	        conn.setAutoCommit(false); // 트랜잭션 시작
 
-	        String sql = "DELETE FROM db2024_Reservation WHERE reserve_id = ?";
+	        String sql = "DELETE FROM db2024_Reservation WHERE reserved_id = ?";
 	        pStmt = conn.prepareStatement(sql);
 
 	        for (ReservationDTO reservation : reservations) {
@@ -187,21 +187,22 @@ public class AdministratorDAOImpl implements AdministratorDAO {
         ResultSet rs = null;
 
         try {
-            String sql = "SELECT reserve_id, room_id, user_name, purpose, person_num, reserve_date, reserve_time, create_date FROM db2024_Reservation ORDER BY reserve_date ASC;";
+            String sql = "SELECT reserved_id, room_id, user_name, reason, people_num, reserved_date, reserved_period, created_date FROM db2024_Reservation ORDER BY reserved_date ASC;";
             pStmt = conn.prepareStatement(sql);
             rs = pStmt.executeQuery();
 
             while (rs.next()) {
-                long reserve_id = rs.getLong("reserve_id");
+                long reserved_id = rs.getLong("reserved_id");
                 long room_id = rs.getLong("room_id");
                 String user_name = rs.getString("user_name");
-                String reason = rs.getString("purpose");
-                int people_num = rs.getInt("person_num");
-                Date reserve_date = rs.getDate("reserve_date");
-                int period = rs.getInt("reserve_time");
-                Date created_date = rs.getDate("create_date");
+                String reason = rs.getString("reason");
+                int people_num = rs.getInt("people_num");
+                Date reserved_date = rs.getDate("reserved_date");
+                int reserved_period = rs.getInt("reserved_period");
+                Date created_date = rs.getDate("created_date");
 
-                ReservationDTO reservation = new ReservationDTO(reserve_id, room_id, user_name, reason, people_num, reserve_date, period, created_date);
+                ReservationDTO reservation = new ReservationDTO(reserved_id, room_id, user_name, 
+                		reason, people_num, reserved_date, reserved_period, created_date);
                 reservations.add(reservation);
             }
         } catch (SQLException e) {
@@ -242,10 +243,10 @@ public class AdministratorDAOImpl implements AdministratorDAO {
                 conditions.add("user_name LIKE ?");
             }
             if (selectedFields.contains("예약 날짜")) {
-                conditions.add("reserve_date = ?");
+                conditions.add("reserved_date = ?");
             }
             if (selectedFields.contains("신청 교시")) {
-                conditions.add("reserve_time = ?");
+                conditions.add("reserved_period = ?");
             }
 
             if (conditions.isEmpty()) {
@@ -253,7 +254,7 @@ public class AdministratorDAOImpl implements AdministratorDAO {
             } else {
                 sql.append(String.join(" AND ", conditions));
             }
-            sql.append(" ORDER BY reserve_date ASC");
+            sql.append(" ORDER BY reserved_date ASC");
 
             pStmt = conn.prepareStatement(sql.toString());
 
@@ -270,16 +271,17 @@ public class AdministratorDAOImpl implements AdministratorDAO {
 
             rs = pStmt.executeQuery();
             while (rs.next()) {
-                long reserve_id = rs.getLong("reserve_id");
+                long reserved_id = rs.getLong("reserved_id");
                 long room_id = rs.getLong("room_id");
                 String user_name = rs.getString("user_name");
-                String reason = rs.getString("purpose");
-                int people_num = rs.getInt("person_num");
-                Date reserve_date = rs.getDate("reserve_date");
-                int periodTime = rs.getInt("reserve_time");
-                Date created_date = rs.getDate("create_date");
+                String reason = rs.getString("reason");
+                int people_num = rs.getInt("people_num");
+                Date reserved_date = rs.getDate("reserved_date");
+                int reserved_period = rs.getInt("reserved_period");
+                Date created_date = rs.getDate("created_date");
 
-                ReservationDTO reservation = new ReservationDTO(reserve_id, room_id, user_name, reason, people_num, reserve_date, periodTime, created_date);
+                ReservationDTO reservation = new ReservationDTO(reserved_id, room_id, user_name, reason, 
+                		people_num, reserved_date, reserved_period, created_date);
                 reservations.add(reservation);
             }
         } catch (SQLException e) {
@@ -310,7 +312,7 @@ public class AdministratorDAOImpl implements AdministratorDAO {
         PreparedStatement pStmt = null;
 
         try {
-            String sql = "DELETE FROM db2024_Reservation WHERE reserve_date < ?";
+            String sql = "DELETE FROM db2024_Reservation WHERE reserved_date < ?";
             pStmt = conn.prepareStatement(sql);
             pStmt.setTimestamp(1, new Timestamp(new Date().getTime()));
 
