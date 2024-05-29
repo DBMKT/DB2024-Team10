@@ -1,4 +1,4 @@
-package db_practice;
+package main.java.com.example.team10.GUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -22,18 +22,18 @@ public class Search extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	// public static void main(String[] args) { // 이 화면만 실행해볼 시 주석 해제
-	// 	EventQueue.invokeLater(new Runnable() {
-	// 		public void run() {
-	// 			try {
-	// 				Search window = new Search();
-	// 				window.setVisible(true);
-	// 			} catch (Exception e) {
-	// 				e.printStackTrace();
-	// 			}
-	// 		}
-	// 	});
-	// }
+//	 public static void main(String[] args) { // 이 화면만 실행해볼 시 주석 해제
+//	 	EventQueue.invokeLater(new Runnable() {
+//	 		public void run() {
+//	 			try {
+//	 				Search window = new Search();
+//	 				window.setVisible(true);
+//	 			} catch (Exception e) {
+//	 				e.printStackTrace();
+//	 			}
+//	 		}
+//	 	});
+//	 }
 
 	/**
 	 * Create the application.
@@ -146,11 +146,10 @@ public class Search extends JFrame {
 		// 달력 선택 패널
 		JPanel calendar_panel = new JPanel();
 		condition_panel1.add(calendar_panel);
-		calendar_panel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 15));
+		calendar_panel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 15));
 		
-		// 예약 날짜 선택
-		JCheckBox dateCheckBox = new JCheckBox("예약 날짜");
-		calendar_panel.add(dateCheckBox);
+		JLabel dateLabel = new JLabel("\uC608\uC57D \uB0A0\uC9DC");
+		calendar_panel.add(dateLabel);
 
 		// JdateChooser 추가(예약 날짜 선택용): dateCheckBox 선택 시 활성화되도록 해야함
 		dateChooser = new JDateChooser();
