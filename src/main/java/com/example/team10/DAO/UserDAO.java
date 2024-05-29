@@ -12,6 +12,6 @@ public interface UserDAO {
     
     void logout();
     
-	List<UserDTO> getUserListByAdminId(long adminId);
+    List<UserDTO> getUserListByAdminId(long adminId);
 
 }
