@@ -6,29 +6,34 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import com.toedter.calendar.JCalendar;
+import com.toedter.calendar.JDateChooser;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.border.EtchedBorder;
 
 public class Search extends JFrame {
 
 	private JTextField capacityTextField;
 	private JTable table;
-	private JCalendar calendar;
+	//private JCalendar calendar;
+	private JDateChooser dateChooser;
 	private DefaultTableModel tableModel;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) { // 화면 실행
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Search window = new Search();
-					window.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	 public static void main(String[] args) { // 이 화면만 실행해볼 시 주석 해제
+//	 	EventQueue.invokeLater(new Runnable() {
+//	 		public void run() {
+//	 			try {
+//	 				Search window = new Search();
+//	 				window.setVisible(true);
+//	 			} catch (Exception e) {
+//	 				e.printStackTrace();
+//	 			}
+//	 		}
+//	 	});
+//	 }
 
 	/**
 	 * Create the application.
@@ -47,10 +52,12 @@ public class Search extends JFrame {
 
 		// 튜플 선택 후 교시 선택하는 패널(화면 하단)
 		JPanel reserve_panel = new JPanel();
+		reserve_panel.setBorder(new TitledBorder(null, "예약하기", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		reserve_panel.setSize(900, 100);
 		getContentPane().add(reserve_panel, BorderLayout.SOUTH);
 		reserve_panel.setLayout(new GridLayout(3, 1, 0, 0));
 
+		
 		// 선택 정보 패널
 		JPanel select_panel = new JPanel();
 		FlowLayout fl_select_panel = (FlowLayout) select_panel.getLayout();
@@ -81,13 +88,15 @@ public class Search extends JFrame {
 		JLabel choosePeriodLabel = new JLabel("교시 선택");
 		choosePeriodLabel.setFont(new Font("굴림", Font.PLAIN, 16));
 		period_panel.add(choosePeriodLabel);
-
-		// 교시 선택 라디오 버튼
+		
+		 //교시 선택 라디오 버튼
+		JRadioButton[] period_rdbtn=new JRadioButton[10];//배열로 수정
 		for (int i = 1; i <= 10; i++) {
-			JRadioButton period_rdbtn = new JRadioButton(i + "교시");
-			period_panel.add(period_rdbtn);
+			period_rdbtn[i-1] = new JRadioButton(); //초기화
+			period_rdbtn[i-1].setText(i + "교시");//rdbtn[0]=1교시
+			period_panel.add(period_rdbtn[i-1]);
 		}
-
+		
 		// 예약 버튼 올라가는 패널
 		JPanel btnPanel = new JPanel();
 		reserve_panel.add(btnPanel);
@@ -96,49 +105,61 @@ public class Search extends JFrame {
 		// 예약 버튼
 		JButton reserveBtn = new JButton("예약");
 		reserveBtn.setFont(new Font("굴림", Font.PLAIN, 18));
-		btnPanel.add(reserveBtn, BorderLayout.CENTER);
-
+		reserveBtn.setPreferredSize(new Dimension(100,20));
+		btnPanel.add(reserveBtn, BorderLayout.EAST);
+		
 		// 검색 조건 패널(화면 상단)
 		JPanel condition_panel = new JPanel();
+		condition_panel.setForeground(new Color(0, 0, 0));
 		getContentPane().add(condition_panel, BorderLayout.NORTH);
-		condition_panel.setLayout(new GridLayout(2, 2, 40, 10));
+		condition_panel.setLayout(new GridLayout(0, 1, 20, 0));
+		
+		// 건물, 날짜 패널
+		JPanel condition_panel1 = new JPanel();
+		FlowLayout flowLayout_1 = (FlowLayout) condition_panel1.getLayout();
+		flowLayout_1.setVgap(0);
+		condition_panel.add(condition_panel1);
+		
+		// 기타 검색 조건 및 검색 버튼 패널
+		JPanel condition_panel2 = new JPanel();
+		FlowLayout flowLayout_2 = (FlowLayout) condition_panel2.getLayout();
+		flowLayout_2.setVgap(0);
+		condition_panel.add(condition_panel2);
 
 		// 건물 선택 패널
 		JPanel building_panel = new JPanel();
-		condition_panel.add(building_panel);
-		building_panel.setLayout(new FlowLayout(FlowLayout.LEFT, 40, 10));
-
-		// '건물' 라벨
-		JLabel buildingLabel = new JLabel("건물");
-		building_panel.add(buildingLabel);
+		condition_panel1.add(building_panel);
+		building_panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 15));
+		
+		// 건물 선택 체크박스
+		JCheckBox buildingCheckBox = new JCheckBox("건물");
+		building_panel.add(buildingCheckBox);
 
 		// 건물 라디오 버튼
 		String[] buildings = {"아산공학관", "신공학관", "연구협력관", "포스코관"};
-		ButtonGroup buildingGroup = new ButtonGroup();
-		for (String building : buildings) {
-			JRadioButton building_rdbtn = new JRadioButton(building);
-			buildingGroup.add(building_rdbtn);
-			building_panel.add(building_rdbtn);
+		JRadioButton[] building_rdbtn=new JRadioButton[4];//배열로 수정
+		for (int i=0;i<4;i++) {
+			building_rdbtn[i]=new JRadioButton(buildings[i]);
+			building_panel.add(building_rdbtn[i]);
 		}
 
 		// 달력 선택 패널
 		JPanel calendar_panel = new JPanel();
-		condition_panel.add(calendar_panel);
-		calendar_panel.setLayout(new FlowLayout(FlowLayout.RIGHT, 40, 10));
-
-		// '예약 날짜' 라벨
-		JLabel dateLabel = new JLabel("예약 날짜");
+		condition_panel1.add(calendar_panel);
+		calendar_panel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 15));
+		
+		JLabel dateLabel = new JLabel("\uC608\uC57D \uB0A0\uC9DC");
 		calendar_panel.add(dateLabel);
 
-		// JCalendar 추가
-		calendar = new JCalendar();
-		calendar.setPreferredSize(new Dimension(200, 200));
-		calendar_panel.add(calendar);
+		// JdateChooser 추가(예약 날짜 선택용): dateCheckBox 선택 시 활성화되도록 해야함
+		dateChooser = new JDateChooser();
+		dateChooser.setPreferredSize(new Dimension(100, 20));
+		calendar_panel.add(dateChooser);
 
 		// 검색 조건들 패널
 		JPanel other_conditions_panel = new JPanel();
-		condition_panel.add(other_conditions_panel);
-		other_conditions_panel.setLayout(new FlowLayout(FlowLayout.LEFT, 40, 10));
+		condition_panel2.add(other_conditions_panel);
+		other_conditions_panel.setLayout(new FlowLayout(FlowLayout.LEFT, 40, 0));
 
 		// 수용인원 패널
 		JPanel capacity_panel = new JPanel();
@@ -184,11 +205,13 @@ public class Search extends JFrame {
 
 		// 검색 버튼 패널
 		JPanel search_button_panel = new JPanel();
-		condition_panel.add(search_button_panel);
+		condition_panel2.add(search_button_panel);
 		search_button_panel.setLayout(new FlowLayout(FlowLayout.RIGHT, 40, 10));
 
 		// 검색 버튼
 		JButton searchBtn = new JButton("검색");
+		searchBtn.setFont(new Font("굴림", Font.PLAIN, 18));
+		searchBtn.setPreferredSize(new Dimension(100,30));
 		search_button_panel.add(searchBtn);
 
 		// 검색 결과가 표 형태로 올라가는 패널(화면 중간)
