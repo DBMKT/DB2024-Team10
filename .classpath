@@ -6,15 +6,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Users/miyao/Desktop/24-1/데베/데이터베이스연동프로그래밍/mysql-connector-java-8.0.23.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/miyao/Downloads/jcalendar-1.4.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/cse_123/Downloads/데이터베이스연동프로그래밍/mysql-connector-java-8.0.23.jar"/>
+	<classpathentry kind="lib" path="C:/Users/cse_123/Downloads/jcalendar-1.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
