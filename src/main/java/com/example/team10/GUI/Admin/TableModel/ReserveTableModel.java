@@ -54,15 +54,15 @@ public class ReserveTableModel extends AbstractTableModel {
             case 1:
                 return reservation.getRoomId();
             case 2:
-                return reservation.getUser_name();
+                return reservation.getUserName();
             case 3:
                 return reservation.getReason();
             case 4:
                 return reservation.getPeopleNum();
             case 5:
-                return reservation.getReserve_date();
+                return reservation.getReservedDate();
             case 6:
-                return reservation.getPeriod();
+                return reservation.getReservedPeriod();
             case 7:
                 return reservation.getCreatedDate();
             default:
