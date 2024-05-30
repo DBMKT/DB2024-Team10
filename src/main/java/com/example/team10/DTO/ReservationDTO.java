@@ -8,8 +8,6 @@ public class ReservationDTO {
     private long admin_id; // 관리자 id
     private long user_id;   // 이용자 id
     private String user_name; // 이용자 이름
-    private int course_no; 	// 학수번호
-    private int class_no;// 분반
     private String reason;  // 목적
     private int people_num;		// 사용 인원
     private Date reserved_date;	// 예약 날짜
@@ -28,21 +26,7 @@ public class ReservationDTO {
 		this.reserved_date = reserved_date;
 		this.reserved_period = reserved_period;
 		this.created_date = created_date;
-    }
-                           
-        
-    public  ReservationDTO(long reserved_id, long room_id, long admin_id, long user_id,
-                            Date reserved_date, int reserved_period, String reason, int people_num, Date created_date) {
-        this.reserved_id = reserved_id;
-        this.room_id = room_id;
-        this.admin_id = admin_id;
-        this.user_id = user_id;
-        this.reserved_date = reserved_date;
-        this.reserved_period = reserved_period;
-        this.reason = reason;
-        this.people_num = people_num;
-        this.created_date = created_date;
-    }
+    }                      
 
     public ReservationDTO() {
 	}
@@ -59,7 +43,6 @@ public class ReservationDTO {
         this.reserved_period = reserved_period;
         this.created_date = created_date;
 	}
-
 	/* Reservation 의 각 필드값에 대한 getter, setter 정의 */
     public long getReservedId() {
         return reserved_id;
@@ -82,7 +65,7 @@ public class ReservationDTO {
     public long getUserId() {
         return user_id;
     }
-    public void setUser_id(long user_id) {
+	public void setUser_id(long user_id) {
         this.user_id = user_id;
     }
     public String getUserName() {
