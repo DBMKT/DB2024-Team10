@@ -9,11 +9,13 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import main.java.com.example.team10.GUI.Admin.ReservationManagement;
+
 public class UserMyHome extends JFrame{
 	
-	private JButton btnAdminLogin;
-	private JButton btnUserLogin;
-	private JButton btnUserSignup;
+	private JButton btnPasswordReset;
+	private JButton btnAddReservation;
+	private JButton btnMyReservationList;
 	
 	public UserMyHome() {
 		init();
@@ -23,19 +25,19 @@ public class UserMyHome extends JFrame{
 	}
 	
 	public void init() {
-		btnAdminLogin = new JButton("비밀번호 변경");
-		btnUserLogin = new JButton("강의실 예약");
-		btnUserSignup = new JButton("내 예약내역 조회");
+		btnPasswordReset = new JButton("비밀번호 변경");
+		btnAddReservation = new JButton("강의실 예약하기");
+		btnMyReservationList = new JButton("내 예약내역 조회");
 		
 		Dimension buttonSize = new Dimension(250,70);
-        btnAdminLogin.setPreferredSize(buttonSize);
-        btnUserLogin.setPreferredSize(buttonSize);
-        btnUserSignup.setPreferredSize(buttonSize);
+		btnPasswordReset.setPreferredSize(buttonSize);
+		btnAddReservation.setPreferredSize(buttonSize);
+		btnMyReservationList.setPreferredSize(buttonSize);
         
         Font font = new Font("굴림", Font.PLAIN, 18);
-        btnAdminLogin.setFont(font);
-        btnUserLogin.setFont(font);
-        btnUserSignup.setFont(font);
+        btnPasswordReset.setFont(font);
+        btnAddReservation.setFont(font);
+        btnMyReservationList.setFont(font);
 	}
 	
 	public void setDisplay() {
@@ -49,39 +51,40 @@ public class UserMyHome extends JFrame{
         gbc.gridy = 0;
         gbc.gridwidth = 2; // span across two columns
         gbc.anchor = GridBagConstraints.CENTER;
-        panel.add(btnAdminLogin, gbc);
+        panel.add(btnPasswordReset, gbc);
 
         // 강의실 예약 버튼
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
-        panel.add(btnUserLogin, gbc);
+        panel.add(btnAddReservation, gbc);
 
         // 나의 예약내역 조회 버튼
         gbc.gridx = 1;
         gbc.gridy = 1;
-        panel.add(btnUserSignup, gbc);
+        panel.add(btnMyReservationList, gbc);
         
 		panel.setBorder(BorderFactory.createEmptyBorder(35, 35, 35, 35));
 		
 		add(panel, BorderLayout.CENTER);
 	}
     public void addListeners() {
-        btnAdminLogin.addActionListener(new ActionListener() {
+    	btnPasswordReset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                new PasswordResetForm(); 
+            }
+        });
+        
+    	btnAddReservation.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 
             }
         });
         
-        btnUserLogin.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // 
-            }
-        });
-        
-        btnUserSignup.addActionListener(new ActionListener() {
+    	btnMyReservationList.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 

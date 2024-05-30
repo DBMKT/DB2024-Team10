@@ -165,6 +165,61 @@ public class UserDAOImpl implements UserDAO {
         return users;
 	}
 	
+	// 사용자 비밀번호 변경
+	@Override
+	public int resetPassword(long id, String originPassword, String newPassword) {
+		PreparedStatement pStmt = null;
+		ResultSet res = null;
+		String sql = "SELECT password FROM db2024_User WHERE id = ?";
+		String updateSql = "UPDATE db2024_User SET password = ? WHERE id = ?";
+		
+	     try {
+	            conn.setAutoCommit(false); // 트랜잭션 시작
+	            
+	            pStmt = conn.prepareStatement(sql);
+	            pStmt.setLong(1, id);
+	            res = pStmt.executeQuery();
+	            
+	            if (res.next()) {
+	                String currentPassword = res.getString("password");
+	                
+	                if (currentPassword.equals(originPassword)) {
+	                    pStmt = conn.prepareStatement(updateSql);
+	                    pStmt.setString(1, newPassword);
+	                    pStmt.setLong(2, id);
+	                    int updated = pStmt.executeUpdate();
+	                    
+	                    if (updated > 0) {
+	                        conn.commit(); // 트랜잭션 커밋
+	                        return 1; // 비밀번호 변경 성공
+	                    }
+	                } else {
+	                    conn.rollback(); // 기존 비밀번호 불일치 시 롤백
+	                    return -1; // 기존 비밀번호 불일치
+	                }
+	            }
+	            conn.rollback(); // 결과가 없을 시 롤백
+	        } catch (SQLException e) {
+	            if (conn != null) {
+	                try {
+	                    conn.rollback(); // 예외 발생 시 롤백
+	                } catch (SQLException ex) {
+	                    ex.printStackTrace();
+	                }
+	            }
+	            e.printStackTrace();
+	        } finally {
+	            try {
+	                if (res != null) res.close();
+	                if (pStmt != null) pStmt.close();
+	                if (conn != null) conn.close();
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	        return 0; // 비밀번호 변경 실패
+	    }
+	
 	// 사용자 로그아웃
 	@Override
 	public void logout() {
