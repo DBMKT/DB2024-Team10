@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import main.java.com.example.team10.GUI.Admin.ReservationManagement;
+import main.java.com.example.team10.GUI.Search;
 
 public class UserMyHome extends JFrame{
 	
@@ -80,7 +81,7 @@ public class UserMyHome extends JFrame{
     	btnAddReservation.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // 
+                new Search().setVisible(true);
             }
         });
         

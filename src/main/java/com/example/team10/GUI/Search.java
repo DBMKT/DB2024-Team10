@@ -3,14 +3,20 @@ package main.java.com.example.team10.GUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.*;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
@@ -26,7 +32,7 @@ public class Search extends JFrame {
 	private DefaultTableModel tableModel;
     private JComboBox<String> plugComboBox;
     private JRadioButton[] building_rdbtn;
-    private JCheckBox capacityCheckBox, plugCheckBox, micCheckBox, projectorCheckBox;
+    private JCheckBox buildingCheckBox, capacityCheckBox, plugCheckBox, micCheckBox, projectorCheckBox;
 
     // Database connection parameters
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
@@ -147,7 +153,7 @@ public class Search extends JFrame {
 		building_panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 15));
 		
 		// 건물 선택 체크박스
-		JCheckBox buildingCheckBox = new JCheckBox("건물");
+		buildingCheckBox = new JCheckBox("건물");
 		building_panel.add(buildingCheckBox);
 
 		// 건물 라디오 버튼
@@ -163,7 +169,7 @@ public class Search extends JFrame {
 		condition_panel1.add(calendar_panel);
 		calendar_panel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 15));
 		
-		JLabel dateLabel = new JLabel("\uC608\uC57D \uB0A0\uC9DC");
+		JLabel dateLabel = new JLabel("(필수) 예약 날짜");
 		calendar_panel.add(dateLabel);
 
 		// JdateChooser 추가(예약 날짜 선택용): dateCheckBox 선택 시 활성화되도록 해야함
@@ -181,7 +187,7 @@ public class Search extends JFrame {
 		other_conditions_panel.add(capacity_panel);
 
 		// 수용인원 체크박스
-		JCheckBox capacityCheckBox = new JCheckBox("최소 수용 인원");
+		capacityCheckBox = new JCheckBox("최소 수용 인원");
 		capacity_panel.add(capacityCheckBox);
 
 		// 수용인원 입력받는 텍스트 필드
@@ -194,12 +200,12 @@ public class Search extends JFrame {
 		other_conditions_panel.add(plug_panel);
 
 		// 콘센트 개수 체크박스
-		JCheckBox plugCheckBox = new JCheckBox("최소 콘센트 개수");
+		plugCheckBox = new JCheckBox("최소 콘센트 개수");
 		plug_panel.add(plugCheckBox);
 
 		// 콘센트 개수 콤보박스
-		JComboBox<String> plugComboBox = new JComboBox<>();
-		plugComboBox.setModel(new DefaultComboBoxModel<>(new String[]{"1", "2", "3"}));
+		plugComboBox = new JComboBox<>();
+		plugComboBox.setModel(new DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4", "5", "6", "7", "8"}));
 		plug_panel.add(plugComboBox);
 
 		// 마이크 패널
@@ -207,7 +213,7 @@ public class Search extends JFrame {
 		other_conditions_panel.add(mic_panel);
 
 		// 마이크 여부 체크박스
-		JCheckBox micCheckBox = new JCheckBox("마이크 여부");
+		micCheckBox = new JCheckBox("마이크 여부");
 		mic_panel.add(micCheckBox);
 
 		// 빔 프로젝터 패널
@@ -215,7 +221,7 @@ public class Search extends JFrame {
 		other_conditions_panel.add(projector_panel);
 
 		// 빔 프로젝터 여부 체크박스
-		JCheckBox projectorCheckBox = new JCheckBox("빔프로젝터 여부");
+		projectorCheckBox = new JCheckBox("빔프로젝터 여부");
 		projector_panel.add(projectorCheckBox);
 
 		// 검색 버튼 패널
@@ -239,7 +245,6 @@ public class Search extends JFrame {
 		tableModel = new DefaultTableModel(null, columnNames);
 
 		table = new JTable(tableModel);
-		table.setCellSelectionEnabled(false); // 셀 단위 선택 비활성화
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 단일 행 선택 모드로 설정
 		table_panel.add(new JScrollPane(table), BorderLayout.CENTER);
 
@@ -253,23 +258,103 @@ public class Search extends JFrame {
 		table.getColumnModel().getColumn(6).setPreferredWidth(100); // 날짜 열 너비 조정
 		table.getColumnModel().getColumn(7).setPreferredWidth(300); // 교시 열 너비 조정
 
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (!e.getValueIsAdjusting()) {
+					int selectedRow = table.getSelectedRow();
+					if (selectedRow != -1) {
+						// 선택된 행에서 건물명과 강의실 정보 가져오기
+						String buildingName = (String) table.getValueAt(selectedRow, 0);
+						String roomNum = (String) table.getValueAt(selectedRow, 1);
+
+						// 선택 정보 라벨에 건물명과 강의실 정보 설정하기
+						selectedLabel.setText(buildingName + " - " + roomNum);
+
+						String reservedPeriod = (String) table.getValueAt(selectedRow, 7);
+
+						// 선택된 행의 교시 값에 따라 교시 라디오 버튼 설정하기
+						for (int i = 0; i < period_rdbtn.length; i++) {
+							String period = period_rdbtn[i].getText();
+							if (reservedPeriod.contains(period + ":x")) {
+								// 선택한 행의 교시가 예약되어 선택 불가능한 경우
+								period_rdbtn[i].setEnabled(false);
+								period_rdbtn[i].setSelected(false);
+							} else {
+								// 선택한 행의 교시가 선택 가능한 경우
+								period_rdbtn[i].setEnabled(true);
+							}
+						}
+					}
+				}
+			}
+		});
+
+
 		// 검색 버튼에 액션 리스너 추가
 		searchBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// 검색 조건을 기반으로 데이터를 가져오는 로직을 추가
-				// 현재는 더미 데이터를 사용하여 예시를 보여줌
+				if (dateChooser.getDate() == null) {
+					JOptionPane.showMessageDialog(Search.this, "예약 날짜를 선택해주세요.", "오류", JOptionPane.ERROR_MESSAGE);
+					return; // 날짜를 선택하지 않은 경우 메소드 종료
+				}
+				// 검색 조건을 기반으로 데이터를 가져오는 로직
+				fetchSearchResults();
+			}
+		});
 
-				// 더미 데이터 설정
-				Object[][] data = {
-						{"아산공학관", "101호", 30, 1, "예", "아니오", "2023-05-27", "1:o, 2:o, 3:x, 4:o, 5:o, 6:x, 7:x, 8:o, 9:o, 10:o"},
-						{"신공학관", "202호", 25, 2, "아니오", "예", "2023-05-28", "1:o, 2:o, 3:o, 4:x, 5:o, 6:o, 7:x, 8:o, 9:o, 10:o"},
-						{"연구협력관", "303호", 35, 1, "예", "아니오", "2023-05-29", "1:o, 2:o, 3:o, 4:o, 5:x, 6:o, 7:o, 8:o, 9:o, 10:o"},
-						{"포스코관", "404호", 28, 2, "아니오", "예", "2023-05-30", "1:o, 2:o, 3:o, 4:o, 5:o, 6:o, 7:o, 8:o, 9:x, 10:o"}
-				};
+		// 예약 버튼 액션 리스너에서 선택된 정보 가져오기
+		reserveBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// 선택된 행 인덱스 가져오기
+				int selectedRow = table.getSelectedRow();
+				if (selectedRow == -1) {
+					JOptionPane.showMessageDialog(Search.this, "강의실을 선택하세요.", "오류", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 
-				// 테이블 모델 업데이트
-				tableModel.setDataVector(data, columnNames);
+				// 선택된 행에서 건물명과 강의실 정보 가져오기
+				String buildingName = (String) table.getValueAt(selectedRow, 0);
+				String roomNum = (String) table.getValueAt(selectedRow, 1);
+
+				// 선택된 행에서 다른 정보들 가져오기
+				int capacity = (int) table.getValueAt(selectedRow, 2);
+				int plugCount = (int) table.getValueAt(selectedRow, 3);
+				String hasMic = (String) table.getValueAt(selectedRow, 4);
+				String hasProjector = (String) table.getValueAt(selectedRow, 5);
+				String reservedDate = (String) table.getValueAt(selectedRow, 6);
+				String reservedPeriod = (String) table.getValueAt(selectedRow, 7);
+
+				// 선택된 교시 정보 가져오기
+				String selectedPeriod = null;
+				for (int i = 0; i < period_rdbtn.length; i++) {
+					if (period_rdbtn[i].isSelected()) {
+						selectedPeriod = period_rdbtn[i].getText();
+						break;
+					}
+				}
+
+				if (selectedPeriod == null) {
+					JOptionPane.showMessageDialog(Search.this, "교시를 선택하세요.", "오류", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				// 여기서 선택된 정보와 선택된 교시를 사용하여 예약 로직을 처리할 수 있습니다.
+				// 여기에 필요한 예약 처리 코드를 추가하세요.
+
+				// 예약할 정보와 선택된 교시를 출력하여 확인합니다.
+				System.out.println("예약 정보:");
+				System.out.println("건물명: " + buildingName);
+				System.out.println("강의실: " + roomNum);
+				System.out.println("수용 인원: " + capacity);
+				System.out.println("콘센트 개수: " + plugCount);
+				System.out.println("마이크 여부: " + hasMic);
+				System.out.println("빔프로젝터 여부: " + hasProjector);
+				System.out.println("날짜: " + reservedDate);
+				System.out.println("교시: " + reservedPeriod);
+				System.out.println("선택한 교시: " + selectedPeriod);
 			}
 		});
 
@@ -279,113 +364,139 @@ public class Search extends JFrame {
 	}
 
 
-    private void fetchSearchResults() {
-        String building = null;
-        for(int i=0;i<4;i++) {
-        	if(building_rdbtn[i].isSelected()) {
-        		building = building_rdbtn[i].getText();
-                break;
-        }
-       
-        if (building == null) {
-            JOptionPane.showMessageDialog(this, "건물을 선택하세요.", "오류", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+	private void fetchSearchResults() {
+		List<String> selectedBuildings = new ArrayList<>();
 
-        //날짜 가져오기
-        java.util.Date selectedDate = dateChooser.getDate();//calendar->dateChooser
-        java.sql.Date sqlDate = new java.sql.Date(selectedDate.getTime());
+//		for (JRadioButton btn : building_rdbtn) {
+//			if (btn.isSelected()) {
+//				building = btn.getText();
+//				break;
+//			}
+//		}
+//		if (building == null) {
+//			JOptionPane.showMessageDialog(this, "건물을 선택하세요.", "오류", JOptionPane.ERROR_MESSAGE);
+//			return;
+//		}
 
-        int capacity = capacityCheckBox.isSelected() ? Integer.parseInt(capacityTextField.getText()) : 0;
-        int plugCount = plugCheckBox.isSelected() ? Integer.parseInt((String) plugComboBox.getSelectedItem()) : 0;
-        boolean hasMic = micCheckBox.isSelected();
-        boolean hasProjector = projectorCheckBox.isSelected();
+		if (buildingCheckBox.isSelected()) {
+			// 선택된 건물들을 리스트에 추가
+			for (JRadioButton radioButton : building_rdbtn) {
+				if (radioButton.isSelected()) {
+					selectedBuildings.add(radioButton.getText());
+				}
+			}
+		}
 
-        String query = "SELECT c.building, c.room_num, c.capacity, c.plug_count, c.hasMic, c.hasProjector, r.reserved_date, r.reserved_period " +
-                       "FROM db2024_Classroom c " +
-                       "LEFT JOIN db2024_Reservation r ON c.room_id = r.room_id " +
-                       "AND (r.reserved_date IS NULL OR r.reserved_date = ?) " +
-                       "WHERE c.building = ? AND c.capacity >= ? AND c.plug_count >= ? " +
-                       (hasMic ? "AND c.hasMic = 1 " : "") +
-                       (hasProjector ? "AND c.hasProjector = 1 " : "");
+		// 건물 선택 체크박스가 선택되지 않은 경우
+		if (!buildingCheckBox.isSelected() || selectedBuildings.isEmpty()) {
+			// 건물 선택 체크박스가 선택되지 않은 경우에는 모든 건물을 선택한 것으로 처리
+			selectedBuildings.clear(); // 선택된 건물 리스트를 비움
+			for (JRadioButton radioButton : building_rdbtn) {
+				selectedBuildings.add(radioButton.getText());
+			}
+		}
 
-        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+		java.util.Date selectedDate = dateChooser.getDate();
+		java.sql.Date sqlDate = new java.sql.Date(selectedDate.getTime());
 
-            pstmt.setDate(1, sqlDate);
-            pstmt.setString(2, building);
-            pstmt.setInt(3, capacity);
-            pstmt.setInt(4, plugCount);
+		int capacity = capacityCheckBox.isSelected() ? Integer.parseInt(capacityTextField.getText()) : 0;
+		int plugCount = plugCheckBox.isSelected() ? Integer.parseInt((String) plugComboBox.getSelectedItem()) : 0;
+		boolean hasMic = micCheckBox.isSelected();
+		boolean hasProjector = projectorCheckBox.isSelected();
 
-            ResultSet rs = pstmt.executeQuery();
-            tableModel.setRowCount(0); // Clear existing results
+		String query = "SELECT c.building, c.room_num, c.capacity, c.plug_count, c.hasMic, c.hasProjector, r.reserved_date, r.reserved_period " +
+				"FROM db2024_Classroom c " +
+				"LEFT JOIN db2024_Reservation r ON c.room_id = r.room_id " +
+				"AND (r.reserved_date IS NULL OR r.reserved_date = ?) " +
+				"WHERE c.building IN (" + String.join(",", Collections.nCopies(selectedBuildings.size(), "?")) + ") " +
+				"AND c.capacity >= ? AND c.plug_count >= ? " +
+				(hasMic ? "AND c.hasMic = 1 " : "") +
+				(hasProjector ? "AND c.hasProjector = 1 " : "");
 
-            // Map to hold room info and periods
-            Map<String, String> roomPeriodMap = new HashMap<>();
+		try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			 PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-            while (rs.next()) {
-                String buildingName = rs.getString("building");
-                String roomNum = rs.getString("room_num");
-                int roomCapacity = rs.getInt("capacity");
-                int roomPlugCount = rs.getInt("plug_count");
-                boolean roomHasMic = rs.getBoolean("hasMic");
-                boolean roomHasProjector = rs.getBoolean("hasProjector");
-                int period = rs.getInt("reserved_period");
+			pstmt.setDate(1, sqlDate);
+			int paramIndex = 2;
+			for (String building : selectedBuildings) {
+				pstmt.setString(paramIndex++, building);
+			}
+			pstmt.setInt(paramIndex++, capacity);
+			pstmt.setInt(paramIndex, plugCount);
 
-                String key = buildingName + "-" + roomNum;
-                String periodInfo = roomPeriodMap.getOrDefault(key, "1:o, 2:o, 3:o, 4:o, 5:o, 6:o, 7:o, 8:o, 9:o, 10:o");
+			ResultSet rs = pstmt.executeQuery();
+			tableModel.setRowCount(0); // Clear existing results
 
-                if (period > 0) {
-                    periodInfo = periodInfo.replace(period + ":o", period + ":x");
-                }
-                roomPeriodMap.put(key, periodInfo);
+			// Map to hold room info and periods
+			Map<String, String> roomPeriodMap = new HashMap<>();
 
-                // If this is the first time we encounter this room, add the static info
-                if (!roomPeriodMap.containsKey(key + "-info")) {
-                    tableModel.addRow(new Object[]{buildingName, roomNum, roomCapacity, roomPlugCount, roomHasMic ? "예" : "아니오",
-                                                   roomHasProjector ? "예" : "아니오", sqlDate.toString(), periodInfo});
-                    roomPeriodMap.put(key + "-info", periodInfo);  // Mark this room as added
-                } else {
-                    // Update the period info for this room
-                    for (int row = 0; row < tableModel.getRowCount(); row++) {
-                        if (tableModel.getValueAt(row, 0).equals(buildingName) && tableModel.getValueAt(row, 1).equals(roomNum)) {
-                            tableModel.setValueAt(periodInfo, row, 7);  // Update the period info
-                            break;
-                        }
-                    }
-                }
-            }
+			while (rs.next()) {
+				String buildingName = rs.getString("building");
+				String roomNum = rs.getString("room_num");
+				int roomCapacity = rs.getInt("capacity");
+				int roomPlugCount = rs.getInt("plug_count");
+				boolean roomHasMic = rs.getBoolean("hasMic");
+				boolean roomHasProjector = rs.getBoolean("hasProjector");
+				int period = rs.getInt("reserved_period");
 
-            // Ensure all classrooms are included even if they have no reservations
-            String classroomQuery = "SELECT building, room_num, capacity, plug_count, hasMic, hasProjector " +
-                                    "FROM db2024_Classroom WHERE building = ? AND capacity >= ? AND plug_count >= ? " +
-                                    (hasMic ? "AND hasMic = 1 " : "") + (hasProjector ? "AND hasProjector = 1 " : "");
-            try (PreparedStatement classroomStmt = conn.prepareStatement(classroomQuery)) {
-                classroomStmt.setString(1, building);
-                classroomStmt.setInt(2, capacity);
-                classroomStmt.setInt(3, plugCount);
-                ResultSet classroomRs = classroomStmt.executeQuery();
+				String key = buildingName + "-" + roomNum;
+				String periodInfo = roomPeriodMap.getOrDefault(key, "1:o, 2:o, 3:o, 4:o, 5:o, 6:o, 7:o, 8:o, 9:o, 10:o");
 
-                while (classroomRs.next()) {
-                    String buildingName = classroomRs.getString("building");
-                    String roomNum = classroomRs.getString("room_num");
-                    int roomCapacity = classroomRs.getInt("capacity");
-                    int roomPlugCount = classroomRs.getInt("plug_count");
-                    boolean roomHasMic = classroomRs.getBoolean("hasMic");
-                    boolean roomHasProjector = classroomRs.getBoolean("hasProjector");
+				if (period > 0) {
+					periodInfo = periodInfo.replace(period + ":o", period + ":x");
+				}
+				roomPeriodMap.put(key, periodInfo);
 
-                    String key = buildingName + "-" + roomNum;
-                    if (!roomPeriodMap.containsKey(key)) {
-                        String periodInfo = "1:o, 2:o, 3:o, 4:o, 5:o, 6:o, 7:o, 8:o, 9:o, 10:o";
-                        tableModel.addRow(new Object[]{buildingName, roomNum, roomCapacity, roomPlugCount, roomHasMic ? "예" : "아니오",
-                                                       roomHasProjector ? "예" : "아니오", sqlDate.toString(), periodInfo});
-                    }
-                }
-            }
+				// If this is the first time we encounter this room, add the static info
+				if (!roomPeriodMap.containsKey(key + "-info")) {
+					tableModel.addRow(new Object[]{buildingName, roomNum, roomCapacity, roomPlugCount, roomHasMic ? "예" : "아니오",
+							roomHasProjector ? "예" : "아니오", sqlDate.toString(), periodInfo});
+					roomPeriodMap.put(key + "-info", periodInfo);  // Mark this room as added
+				} else {
+					// Update the period info for this room
+					for (int row = 0; row < tableModel.getRowCount(); row++) {
+						if (tableModel.getValueAt(row, 0).equals(buildingName) && tableModel.getValueAt(row, 1).equals(roomNum)) {
+							tableModel.setValueAt(periodInfo, row, 7);  // Update the period info
+							break;
+						}
+					}
+				}
+			}
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+			// Ensure all classrooms are included even if they have no reservations
+			String classroomQuery = "SELECT building, room_num, capacity, plug_count, hasMic, hasProjector " +
+					"FROM db2024_Classroom WHERE building IN (" + String.join(",", Collections.nCopies(selectedBuildings.size(), "?")) + ") " +
+					"AND capacity >= ? AND plug_count >= ? " +
+					(hasMic ? "AND hasMic = 1 " : "") + (hasProjector ? "AND hasProjector = 1 " : "");
+			try (PreparedStatement classroomStmt = conn.prepareStatement(classroomQuery)) {
+				paramIndex = 1;
+				for (String building : selectedBuildings) {
+					classroomStmt.setString(paramIndex++, building);
+				}
+				classroomStmt.setInt(2, capacity);
+				classroomStmt.setInt(3, plugCount);
+				ResultSet classroomRs = classroomStmt.executeQuery();
+
+				while (classroomRs.next()) {
+					String buildingName = classroomRs.getString("building");
+					String roomNum = classroomRs.getString("room_num");
+					int roomCapacity = classroomRs.getInt("capacity");
+					int roomPlugCount = classroomRs.getInt("plug_count");
+					boolean roomHasMic = classroomRs.getBoolean("hasMic");
+					boolean roomHasProjector = classroomRs.getBoolean("hasProjector");
+
+					String key = buildingName + "-" + roomNum;
+					if (!roomPeriodMap.containsKey(key)) {
+						String periodInfo = "1:o, 2:o, 3:o, 4:o, 5:o, 6:o, 7:o, 8:o, 9:o, 10:o";
+						tableModel.addRow(new Object[]{buildingName, roomNum, roomCapacity, roomPlugCount, roomHasMic ? "예" : "아니오",
+								roomHasProjector ? "예" : "아니오", sqlDate.toString(), periodInfo});
+					}
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
     }
-    }
-}
