@@ -14,21 +14,35 @@ public class ReservationDTO {
     private int reserved_period;	// 예약 교시
     private Date created_date;  // 예약 요청 시간
 
-	
     public  ReservationDTO(long reserved_id, long room_id, long admin_id, long user_id, String user_name,
-                            Date reserved_date, int reserved_period, String reason, int people_num, Date created_date) {
-        this.reserved_id = reserved_id;
+            Date reserved_date, int reserved_period, String reason, int people_num, Date created_date) {
+    	this.reserved_id = reserved_id;
+    	this.room_id = room_id;
+		this.admin_id = admin_id;
+		this.user_id = user_id;
+		this.user_name = user_name;
+		this.reason = reason;
+		this.people_num = people_num;
+		this.reserved_date = reserved_date;
+		this.reserved_period = reserved_period;
+		this.created_date = created_date;
+    }                      
+
+    public ReservationDTO() {
+	}
+
+	public ReservationDTO(long reserved_id, long room_id, String user_name, String reason, 
+			int people_num, Date reserved_date, int reserved_period, 
+			Date created_date) {
+		this.reserved_id = reserved_id;
         this.room_id = room_id;
-        this.admin_id = admin_id;
-        this.user_id = user_id;
-	this.user_name = user_name;
-	this.reason = reason;
+        this.user_name = user_name;
+        this.reason = reason;
         this.people_num = people_num;
         this.reserved_date = reserved_date;
         this.reserved_period = reserved_period;
         this.created_date = created_date;
-    }
-
+	}
 	/* Reservation 의 각 필드값에 대한 getter, setter 정의 */
     public long getReservedId() {
         return reserved_id;
@@ -51,14 +65,14 @@ public class ReservationDTO {
     public long getUserId() {
         return user_id;
     }
-    public void setUser_id(long user_id) {
+	public void setUser_id(long user_id) {
         this.user_id = user_id;
     }
     public String getUserName() {
-	return user_name;
+    	return user_name;
     }
     public void setUserName(String user_name) {
-	this.user_name = user_name;
+    	this.user_name = user_name;
     }
     public Date getReservedDate() {
         return reserved_date;

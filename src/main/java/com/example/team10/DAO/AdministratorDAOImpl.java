@@ -136,7 +136,7 @@ public class AdministratorDAOImpl implements AdministratorDAO {
 	        pStmt = conn.prepareStatement(sql);
 
 	        for (ReservationDTO reservation : reservations) {
-	            pStmt.setLong(1, reservation.getReserveId());
+	            pStmt.setLong(1, reservation.getReservedId());
 	            pStmt.addBatch();
 	        }
 
