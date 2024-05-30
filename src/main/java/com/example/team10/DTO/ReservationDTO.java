@@ -31,10 +31,10 @@ public class ReservationDTO {
     public ReservationDTO() {
 	}
 
-	public ReservationDTO(long reserve_id, long room_id, String user_name, String reason, 
+	public ReservationDTO(long reserved_id, long room_id, String user_name, String reason, 
 			int people_num, Date reserved_date, int reserved_period, 
 			Date created_date) {
-		this.reserved_id = reserve_id;
+		this.reserved_id = reserved_id;
         this.room_id = room_id;
         this.user_name = user_name;
         this.reason = reason;
