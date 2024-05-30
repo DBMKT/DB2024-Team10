@@ -11,7 +11,7 @@ public class JdbcUtil {
 		final String DB_URL = "jdbc:mysql://localhost/db2024team10";
 		//Database credentials
 		//MySQL 계정과 암호 입력
-		final String USER = "root";
+		final String USER = "root"; 
 		final String PASS = "root";
 
 		try {

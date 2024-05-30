@@ -129,7 +129,7 @@ public class AdminMyHome extends JFrame {
         btnUserManagement.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // 예약 관리 화면으로 전환 (예시로 간단한 메시지 박스를 띄움)
+                // 사용자 관리 화면으로 전환 (예시로 간단한 메시지 박스를 띄움)
                 		dispose(); // 현재 창 닫기
                 		new UserManagement(); // 홈 화면 열기
         	}

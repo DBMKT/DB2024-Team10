@@ -7,7 +7,6 @@ import main.java.com.example.team10.DAO.AdministratorDAOImpl;
 import main.java.com.example.team10.DTO.AdministratorDTO;
 import main.java.com.example.team10.DTO.UserDTO;
 import main.java.com.example.team10.GUI.Home;
-import main.java.com.example.team10.GUI.LoginForm;
 import main.java.com.example.team10.util.SessionManager;
 
 public class App {
@@ -43,22 +42,23 @@ public class App {
 		
         // 관리자 로그인 test 코드
 		
-		  AdministratorDTO admin = adminDAO.adminLogin(99999992, "rhksflwk2"); if
-		  (admin != null) { System.out.println("관리자 로그인 성공: " + admin.getContact()); }
-		  else { System.out.println("관리자 로그인 실패: 잘못된 ID 또는 비밀번호"); }
-		 
-        
-        // Check if admin is logged in
-		
-		  if (SessionManager.isAdminLoggedIn()) { System.out.println("관리자 세션 유지 중: " +
-		  ((AdministratorDTO) SessionManager.getCurrentAdmin()).getContact()); } else {
-		  System.out.println("관리자 세션 유지 실패"); }
-		
-		 // 사용자 체크
-		if (SessionManager.isUserLoggedIn()){ System.out.println("이용자 세션 유지 중: " +
-				((UserDTO) SessionManager.getCurrentUser()).getPhoneNum());} else {
-			System.out.println("이용자 세션 유지 실패");
-		}
+		/*
+		 * AdministratorDTO admin = adminDAO.adminLogin(99999992, "rhksflwk2"); if
+		 * (admin != null) { System.out.println("관리자 로그인 성공: " + admin.getContact()); }
+		 * else { System.out.println("관리자 로그인 실패: 잘못된 ID 또는 비밀번호"); }
+		 * 
+		 * 
+		 * // Check if admin is logged in
+		 * 
+		 * if (SessionManager.isAdminLoggedIn()) { System.out.println("관리자 세션 유지 중: " +
+		 * ((AdministratorDTO) SessionManager.getCurrentAdmin()).getContact()); } else {
+		 * System.out.println("관리자 세션 유지 실패"); }
+		 * 
+		 * // 사용자 체크 if (SessionManager.isUserLoggedIn()){
+		 * System.out.println("이용자 세션 유지 중: " + ((UserDTO)
+		 * SessionManager.getCurrentUser()).getPhoneNum());} else {
+		 * System.out.println("이용자 세션 유지 실패"); }
+		 */
 
        // 관리자 --> 사용자 권한 조정 (블락)
 		/*

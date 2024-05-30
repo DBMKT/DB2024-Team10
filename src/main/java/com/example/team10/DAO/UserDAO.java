@@ -10,6 +10,9 @@ public interface UserDAO {
 	
     UserDTO login(long id, String password); // 로그인
     
+    int resetPassword(long id, String originPassword, String newPassword); // 비밀번호 변경
+    // 성공 시 1, 실패시 0 반환
+    
     void logout();
     
     List<UserDTO> getUserListByAdminId(long adminId);
