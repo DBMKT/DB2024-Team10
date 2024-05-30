@@ -14,6 +14,7 @@ import main.java.com.example.team10.DAO.UserDAOImpl;
 import main.java.com.example.team10.DTO.AdministratorDTO;
 import main.java.com.example.team10.DTO.UserDTO;
 import main.java.com.example.team10.GUI.Admin.AdminMyHome;
+import main.java.com.example.team10.GUI.User.UserMyHome;
 
 public class LoginForm extends JFrame {
 	
@@ -142,6 +143,8 @@ public class LoginForm extends JFrame {
 							"로그인 성공: "+loginRequestUser.getName()+"님, 안녕하세요.",
 							"로그인폼",
 							JOptionPane.INFORMATION_MESSAGE);
+						dispose();
+						new UserMyHome();
 							// 로그인 성공 시 관리자 my home, 사용자 my home으로 이동
 						} else {
 							JOptionPane.showMessageDialog(LoginForm.this,
