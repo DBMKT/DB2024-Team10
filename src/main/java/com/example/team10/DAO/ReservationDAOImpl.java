@@ -30,6 +30,8 @@ public class ReservationDAOImpl implements ReservationDAO {
             return;
         }
 
+
+
         String query = "INSERT INTO db2024_Reservation (room_id, user_id, reason, people_num, reserved_date, reserved_period, created_date) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement statement = conn.prepareStatement(query)) {
@@ -46,5 +48,4 @@ public class ReservationDAOImpl implements ReservationDAO {
             e.printStackTrace();
         }
     }
-
 }

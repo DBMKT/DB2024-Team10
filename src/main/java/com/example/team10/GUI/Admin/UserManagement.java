@@ -3,7 +3,6 @@ package main.java.com.example.team10.GUI.Admin;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.swing.*;
@@ -17,6 +16,7 @@ import main.java.com.example.team10.DAO.UserDAOImpl;
 import main.java.com.example.team10.DTO.AdministratorDTO;
 import main.java.com.example.team10.DTO.UserDTO;
 import main.java.com.example.team10.GUI.Home;
+import main.java.com.example.team10.GUI.Admin.TableModel.UserTableModel;
 import main.java.com.example.team10.util.SessionManager;
 
 public class UserManagement extends JFrame {
@@ -57,17 +57,13 @@ public class UserManagement extends JFrame {
 
         List<UserDTO> users = userDAO.getUserListByAdminId(admin.getId());
 
-        userTableModel = new UserTableModel(users);
+        userTableModel = new UserTableModel(users, adminDAO);
         userTable = new JTable(userTableModel); // userTable 초기화
         userTable.setFillsViewportHeight(true);
         userTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new JCheckBox())); // userTable 초기화 후 컬럼 설정
 
         scrollPane = new JScrollPane(userTable); // JScrollPane 초기화
-		/*
-		 * TableColumn canReserveColumn = userTable.getColumnModel().getColumn(5);
-		 * canReserveColumn.setPreferredWidth(70); canReserveColumn.setMaxWidth(50);
-		 * canReserveColumn.setMinWidth(50);
-		 */
+        
         btnLogout = new JButton("로그아웃");
         btnBack = new JButton("이전");
         btnMyHome = new JButton("My홈");
@@ -120,77 +116,10 @@ public class UserManagement extends JFrame {
         });
     }
     public void showFrame() {
-        setTitle("User Management");
+        setTitle("관리자 모드:사용자 관리");
         setSize(1000, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
-   
-    private class UserTableModel extends AbstractTableModel {
-
-        private final String[] columnNames = {"ID", "이름", "전공", "이메일", "전화번호", "예약 가능 상태"};
-        private List<UserDTO> users;
-
-        public UserTableModel(List<UserDTO> users) {
-            this.users = users;
-        }
-
-        @Override
-        public int getRowCount() {
-            return users.size();
-        }
-
-        @Override
-        public int getColumnCount() {
-            return columnNames.length;
-        }
-
-        @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            UserDTO user = users.get(rowIndex);
-            switch (columnIndex) {
-                case 0:
-                    return user.getId();
-                case 1:
-                    return user.getName();
-                case 2:
-                    return user.getMajor();
-                case 3:
-                	return user.getEmail();
-                case 4:
-                	return user.getPhoneNum();
-                case 5:
-                	return user.isCanReserve();
-                default:
-                    return null;
-            }
-        }
-    
-    @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (columnIndex == 5) {
-            UserDTO user = users.get(rowIndex);
-            user.setCanReserve((Boolean) aValue);
-            adminDAO.updateUserInfo(user);
-        }
-    }
-    @Override
-    public String getColumnName(int column) {
-        return columnNames[column];
-    }
-
-    @Override
-    public Class<?> getColumnClass(int columnIndex) {
-        if (columnIndex == 5) {
-            return Boolean.class;
-        }
-        return String.class;
-    }
-
-    @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 5;
-    }
-  }
 }

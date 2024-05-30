@@ -140,15 +140,13 @@ public class AdminMyHome extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 예약 관리 화면으로 전환 (예시로 간단한 메시지 박스를 띄움)
-                JOptionPane.showMessageDialog(AdminMyHome.this,
-                        "예약 관리 화면 아직 구현 하지 않음.",
-                        "예약 관리",
-                        JOptionPane.INFORMATION_MESSAGE);
+                dispose();
+                new ReservationManagement();
             }
         });
     }
     public void showFrame() {
-        setTitle("관리자 my 홈");
+        setTitle("관리자 모드: my 홈");
         setSize(500, 200);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

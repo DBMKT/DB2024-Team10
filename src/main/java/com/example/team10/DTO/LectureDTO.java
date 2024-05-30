@@ -1,5 +1,7 @@
 package main.java.com.example.team10.DTO;
 
+import main.java.com.example.team10.DTO.enums.DayType;
+
 public class LectureDTO {
 
     private int course_no; 			// 학수번호
