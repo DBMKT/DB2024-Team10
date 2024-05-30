@@ -18,6 +18,12 @@ public class UserDAOImpl implements UserDAO {
     public UserDAOImpl() {
         this.conn = JdbcUtil.getConnection();
     }
+    
+    private void checkAndReconnect() throws SQLException {
+        if (conn == null || conn.isClosed()) {
+            this.conn = JdbcUtil.getConnection();
+        }
+    }
 
 	// 회원가입
     @Override
@@ -28,6 +34,7 @@ public class UserDAOImpl implements UserDAO {
 		ResultSet res = null;
 
 		try {
+			checkAndReconnect();
 			conn.setAutoCommit(false);	// 자동 커밋 비활성화
 			
 			// 중복 회원인지 먼저 확인해주는 작업 필요
@@ -93,6 +100,7 @@ public class UserDAOImpl implements UserDAO {
 		PreparedStatement pStmt = null;
 		ResultSet res = null;
 		try {
+			checkAndReconnect();
 			conn.setAutoCommit(false); // 트랜잭션 시작
 			
 			pStmt = conn.prepareStatement("SELECT * FROM db2024_user WHERE id = ? AND password = ?");
@@ -145,6 +153,7 @@ public class UserDAOImpl implements UserDAO {
 		String sql = "SELECT * FROM db2024_User WHERE admin_id=?";
 		
         try (PreparedStatement pStmt = conn.prepareStatement(sql)) {
+			checkAndReconnect();
             pStmt.setLong(1, adminId);
             ResultSet rs = pStmt.executeQuery();
 
@@ -174,7 +183,8 @@ public class UserDAOImpl implements UserDAO {
 		String updateSql = "UPDATE db2024_User SET password = ? WHERE id = ?";
 		
 	     try {
-	            conn.setAutoCommit(false); // 트랜잭션 시작
+			checkAndReconnect();
+	         conn.setAutoCommit(false); // 트랜잭션 시작
 	            
 	            pStmt = conn.prepareStatement(sql);
 	            pStmt.setLong(1, id);
@@ -187,9 +197,9 @@ public class UserDAOImpl implements UserDAO {
 	                    pStmt = conn.prepareStatement(updateSql);
 	                    pStmt.setString(1, newPassword);
 	                    pStmt.setLong(2, id);
-	                    int updated = pStmt.executeUpdate();
+	                    int rowsAffected = pStmt.executeUpdate();
 	                    
-	                    if (updated > 0) {
+	                    if (rowsAffected > 0) {
 	                        conn.commit(); // 트랜잭션 커밋
 	                        return 1; // 비밀번호 변경 성공
 	                    }
@@ -209,10 +219,10 @@ public class UserDAOImpl implements UserDAO {
 	            }
 	            e.printStackTrace();
 	        } finally {
+	            JdbcUtil.close(res);
+	            JdbcUtil.close(pStmt);
 	            try {
-	                if (res != null) res.close();
-	                if (pStmt != null) pStmt.close();
-	                if (conn != null) conn.close();
+	                conn.setAutoCommit(true); // 트랜잭션 종료
 	            } catch (SQLException e) {
 	                e.printStackTrace();
 	            }

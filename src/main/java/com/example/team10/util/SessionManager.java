@@ -2,6 +2,7 @@ package main.java.com.example.team10.util;
 
 import main.java.com.example.team10.DTO.AdministratorDTO;
 import main.java.com.example.team10.DTO.UserDTO;
+
 // 세션 관리 --> Authenticate(로그인된 상태)
 public class SessionManager {
 	private static AdministratorDTO currentAdmin;

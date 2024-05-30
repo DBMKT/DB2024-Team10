@@ -47,9 +47,9 @@ public class PasswordResetForm extends JFrame {
 	}
 	
 	public void init() {
-        Dimension jLabelSize = new Dimension(120, 30); // 레이블 크기
-        Dimension tfSize = new Dimension(200, 30); // 텍스트 필드 크기
-        Dimension btnSize = new Dimension(100, 30); // 버튼 크기
+        Dimension jLabelSize = new Dimension(120, 10); // 레이블 크기
+        Dimension tfSize = new Dimension(200, 10); // 텍스트 필드 크기
+        Dimension btnSize = new Dimension(100, 10); // 버튼 크기
         
         jLabelOriginPassword = new JLabel("기존 비밀번호");
         jLabelOriginPassword.setPreferredSize(jLabelSize);
@@ -67,10 +67,10 @@ public class PasswordResetForm extends JFrame {
 	public void setDisplay() {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(8,8,8,8);
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
+        gbc.weightx = 0.8;
+        gbc.weighty = 0.8;
         
 	        // 기존 비번
 	        gbc.gridx = 0;
@@ -146,6 +146,7 @@ public class PasswordResetForm extends JFrame {
 	                                "비밀번호 변경에 실패했습니다.",
 	                                "비밀번호 변경",
 	                                JOptionPane.ERROR_MESSAGE);
+							dispose();
 	                    }
 					}
 				}
