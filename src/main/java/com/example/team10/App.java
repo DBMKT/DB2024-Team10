@@ -66,7 +66,7 @@ public class App {
 		 * if(loginUser.isCanReserve()) { loginUser.setCanReserve(false); } else {
 		 * loginUser.setCanReserve(true); } adminDAO.updateUserInfo(loginUser); }
 		 */
-       
+
 		  // 관리자 --> 예약 내역 조정
 			/*
 			 * if(admin != null) { admin.deleteReservationInfo(); }

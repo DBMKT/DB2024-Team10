@@ -12,7 +12,7 @@ public class JdbcUtil {
 		//Database credentials
 		//MySQL 계정과 암호 입력
 		final String USER = "root";
-		final String PASS = "Mtlstnwjd58^^";
+		final String PASS = "root";
 
 		try {
 			Class.forName(JDBC_DRIVER);
