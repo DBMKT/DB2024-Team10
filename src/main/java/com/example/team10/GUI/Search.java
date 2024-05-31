@@ -114,9 +114,25 @@ public class Search extends JFrame {
 		JRadioButton[] period_rdbtn=new JRadioButton[10];//배열로 수정
 		for (int i = 1; i <= 10; i++) {
 			period_rdbtn[i-1] = new JRadioButton(); //초기화
-			period_rdbtn[i-1].setText(i + "교시");//rdbtn[0]=1교시
+			period_rdbtn[i-1].setText(i + "교시"); //rdbtn[0]=1교시
 			period_panel.add(period_rdbtn[i-1]);
-		}
+
+			// 각 교시 라디오 버튼에 액션 리스너 추가
+			period_rdbtn[i - 1].addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JRadioButton selectedButton = (JRadioButton) e.getSource();
+					if (selectedButton.isSelected()) {
+						for (int j = 0; j < period_rdbtn.length; j++) {
+							if (period_rdbtn[j] != selectedButton) {
+								period_rdbtn[j].setSelected(false);
+							}
+						}
+					}
+				}
+
+		});
+	}
 		
 		// 예약 버튼 올라가는 패널
 		JPanel btnPanel = new JPanel();
@@ -275,14 +291,13 @@ public class Search extends JFrame {
 
 						// 선택된 행의 교시 값에 따라 교시 라디오 버튼 설정하기
 						for (int i = 0; i < period_rdbtn.length; i++) {
-							String period = period_rdbtn[i].getText();
-							if (reservedPeriod.contains(period + ":x")) {
-								// 선택한 행의 교시가 예약되어 선택 불가능한 경우
+							String period = (i + 1) + ":o";
+							String periodText = (i + 1) + "교시";
+							if (reservedPeriod.contains(period)) {
+								period_rdbtn[i].setEnabled(true);
+							} else {
 								period_rdbtn[i].setEnabled(false);
 								period_rdbtn[i].setSelected(false);
-							} else {
-								// 선택한 행의 교시가 선택 가능한 경우
-								period_rdbtn[i].setEnabled(true);
 							}
 						}
 					}
@@ -367,17 +382,6 @@ public class Search extends JFrame {
 	private void fetchSearchResults() {
 		List<String> selectedBuildings = new ArrayList<>();
 
-//		for (JRadioButton btn : building_rdbtn) {
-//			if (btn.isSelected()) {
-//				building = btn.getText();
-//				break;
-//			}
-//		}
-//		if (building == null) {
-//			JOptionPane.showMessageDialog(this, "건물을 선택하세요.", "오류", JOptionPane.ERROR_MESSAGE);
-//			return;
-//		}
-
 		if (buildingCheckBox.isSelected()) {
 			// 선택된 건물들을 리스트에 추가
 			for (JRadioButton radioButton : building_rdbtn) {
@@ -404,10 +408,12 @@ public class Search extends JFrame {
 		boolean hasMic = micCheckBox.isSelected();
 		boolean hasProjector = projectorCheckBox.isSelected();
 
-		String query = "SELECT c.building, c.room_num, c.capacity, c.plug_count, c.hasMic, c.hasProjector, r.reserved_date, r.reserved_period " +
+		String query = "SELECT c.building, c.room_num, c.capacity, c.plug_count, c.hasMic, c.hasProjector, " +
+				"r.reserved_date, r.reserved_period, l.day1_of_week, l.period1, l.day2_of_week, l.period2 " +
 				"FROM db2024_Classroom c " +
 				"LEFT JOIN db2024_Reservation r ON c.room_id = r.room_id " +
 				"AND (r.reserved_date IS NULL OR r.reserved_date = ?) " +
+				"LEFT JOIN db2024_Lecture l ON c.room_id = l.room_id " +
 				"WHERE c.building IN (" + String.join(",", Collections.nCopies(selectedBuildings.size(), "?")) + ") " +
 				"AND c.capacity >= ? AND c.plug_count >= ? " +
 				(hasMic ? "AND c.hasMic = 1 " : "") +
@@ -438,6 +444,10 @@ public class Search extends JFrame {
 				boolean roomHasMic = rs.getBoolean("hasMic");
 				boolean roomHasProjector = rs.getBoolean("hasProjector");
 				int period = rs.getInt("reserved_period");
+				int day1OfWeek = rs.getInt("day1_of_week");
+				int period1 = rs.getInt("period1");
+				int day2OfWeek = rs.getInt("day2_of_week");
+				int period2 = rs.getInt("period2");
 
 				String key = buildingName + "-" + roomNum;
 				String periodInfo = roomPeriodMap.getOrDefault(key, "1:o, 2:o, 3:o, 4:o, 5:o, 6:o, 7:o, 8:o, 9:o, 10:o");
@@ -445,6 +455,21 @@ public class Search extends JFrame {
 				if (period > 0) {
 					periodInfo = periodInfo.replace(period + ":o", period + ":x");
 				}
+
+				// 현재 날짜의 요일을 계산하여 강의와 겹치는지 확인
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(sqlDate);
+				int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - 1;
+				// 1: 일요일, 2: 월요일, ..., 7: 토요일 이라
+				// 1: 월요일, 2: 화요일, ..., 5: 금요일로 바꿔줌
+
+				if (dayOfWeek == day1OfWeek && period1 > 0) {
+					periodInfo = periodInfo.replace(period1 + ":o", period1 + ":x");
+				}
+				if (dayOfWeek == day2OfWeek && period2 > 0) {
+					periodInfo = periodInfo.replace(period2 + ":o", period2 + ":x");
+				}
+
 				roomPeriodMap.put(key, periodInfo);
 
 				// If this is the first time we encounter this room, add the static info
