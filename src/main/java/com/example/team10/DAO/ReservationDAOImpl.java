@@ -10,7 +10,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import db_practice.Reservation;
 
 public class ReservationDAOImpl implements ReservationDAO {
 
