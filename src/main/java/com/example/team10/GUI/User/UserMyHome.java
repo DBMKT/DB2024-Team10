@@ -88,7 +88,7 @@ public class UserMyHome extends JFrame{
     	btnMyReservationList.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // 
+                new MyReservations();
             }
         });
     }
