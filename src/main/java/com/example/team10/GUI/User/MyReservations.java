@@ -1,7 +1,6 @@
 package main.java.com.example.team10.GUI.User;
 
 import javax.swing.*;
-import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +20,8 @@ public class MyReservations extends JFrame {
     private ReserveTableModel reserveTableModel;
     private JButton btnLogout;
     private JButton btnBack;
+    private JLabel lblUserName;
+    private Font koreanFont;
 
    public MyReservations() {
         user = SessionManager.getCurrentUser();
@@ -37,9 +38,21 @@ public class MyReservations extends JFrame {
     }
 
     private void init() {
+    	try {
+            koreanFont = new Font("Malgun Gothic", Font.PLAIN, 14);
+            // Ensure the font is available on the system
+            if (!isFontAvailable(koreanFont)) {
+                koreanFont = new Font("SansSerif", Font.PLAIN, 14); // Fallback font
+            }
+        } catch (Exception e) {
+            koreanFont = new Font("SansSerif", Font.PLAIN, 14); // Fallback font
+        }
+    	
         btnLogout = new JButton("로그아웃");
         btnBack = new JButton("이전");
 
+        lblUserName = new JLabel(user.getName()+" 학생의 예약내역");
+        lblUserName.setFont(koreanFont);
         reserveTableModel = new ReserveTableModel(new ArrayList<>(), false);
         reserveTable = new JTable(reserveTableModel);
 
@@ -47,9 +60,14 @@ public class MyReservations extends JFrame {
     }
 
     private void setDisplay() {
-        JPanel panelNorth = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        panelNorth.add(btnLogout);
-        panelNorth.add(btnBack);
+    	JPanel panelNorth = new JPanel(new BorderLayout());
+        JPanel panelNorthButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelNorthButtons.add(btnLogout);
+        panelNorthButtons.add(btnBack);
+
+        panelNorth.add(lblUserName, BorderLayout.WEST);
+
+        panelNorth.add(panelNorthButtons, BorderLayout.EAST);
 
         add(panelNorth, BorderLayout.NORTH);
         add(new JScrollPane(reserveTable), BorderLayout.CENTER);
@@ -57,7 +75,10 @@ public class MyReservations extends JFrame {
 
     private void loadUserReservations() {
         List<ReservationDTO> reservations = reservationDAO.getReservationsByUserId(user.getId());
-        	reserveTableModel.setReservations(reservations);
+        for (ReservationDTO reservation : reservations) {
+            reservation.setUserName(user.getName());
+        }  
+        reserveTableModel.setReservations(reservations);
     }
 
     private void addListeners() {
@@ -80,10 +101,16 @@ public class MyReservations extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
+    
+    private boolean isFontAvailable(Font font) {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        for (Font f : ge.getAllFonts()) {
+            if (f.getName().equals(font.getName())) {
+                return true;
+            }
+        }
+        return false;
+
+    }
 
 }
-
-
-
-
- 

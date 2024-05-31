@@ -24,7 +24,7 @@ public class ReserveTableModel extends AbstractTableModel {
         if (includeCheckbox) {
             this.columnNames = new String[]{ "", "강의실 ID", "예약자 이름", "목적", "인원 수", "예약 날짜", "교시", "신청 날짜" };
         } else {
-            this.columnNames = new String[]{ "강의실 ID", "예약자 이름", "목적", "인원 수", "예약 날짜", "교시", "신청 날짜" };
+            this.columnNames = new String[]{ "강의실 ID", "목적", "인원 수", "예약 날짜", "교시", "신청 날짜" };
         }
     }
 
@@ -85,16 +85,14 @@ public class ReserveTableModel extends AbstractTableModel {
 	            case 0:
 	                return reservation.getRoomId();
 	            case 1:
-	                return reservation.getUserName();
-	            case 2:
 	                return reservation.getReason();
-	            case 3:
+	            case 2:
 	                return reservation.getPeopleNum();
-	            case 4:
+	            case 3:
 	                return reservation.getReservedDate();
-	            case 5:
+	            case 4:
 	                return reservation.getReservedPeriod();
-	            case 6:
+	            case 5:
 	                return reservation.getCreatedDate();
 	            default:
 	                return null;
