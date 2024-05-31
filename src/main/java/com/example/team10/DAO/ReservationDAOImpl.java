@@ -1,5 +1,6 @@
 package main.java.com.example.team10.DAO;
 
+import main.java.com.example.team10.DTO.AdministratorDTO;
 import main.java.com.example.team10.DTO.ReservationDTO;
 import main.java.com.example.team10.DTO.UserDTO;
 import main.java.com.example.team10.util.JdbcUtil;
@@ -22,28 +23,50 @@ public class ReservationDAOImpl implements ReservationDAO {
         }
     }
 
-//    #1 예약 페이지에서 정보를 선택하면->set함수
-//    다음 예약 확정페이지에서 정보를 #2get함수로 불러오면 되는건가요?!?
-//    		 ReservationDAO에서욥??
-//    		보통 #1 => 부분을 ReservationDTO의 생성자부분(받는 파라미터) 로 만들어서 인스턴스 생성해주고, 그 다음에 set을 이용해서 정의를 해주고 => 
-//    		만들어진 인스턴스에서 #2처리하면 될걸요??
 
-    // 예약하기 함수
+    // 예약 생성 함수
     @Override
-    public ReservationDTO createReservation() {
+    public void createReservation(ReservationDTO reserve) { 
+    	//Search에서 정보 넘김-> Reserve에서 수합->createReservation으로 예약 생성->insertReservation에서 sql 처리
     	//예약 인스턴스 생성
     	ReservationDTO reservation=null;
     	
-        // 세션에 저장된 user 정보 불러오기
+    	//1: reserved_id
+    	reservation.setReservedId();//어디서?
+    	
+    	//2: room_id
+    	reservation.setRoomId(reserve.getRoomId());//search
+    	
+    	//3: admin_id(어떻게 설정할 것인가?)
+    	int admin_id=99999991+(int)reservation.getReservedId()%4;
+    	reservation.setAdmin_id(admin_id);
+    	
+    	// 세션에 저장된 user 정보 불러오기
         UserDTO currentUser = SessionManager.getCurrentUser();
         if (currentUser == null) {
             System.out.println("로그인된 사용자가 없습니다. 예약을 생성할 수 없습니다.");
-            return reservation;
+            return;
         }
+    	//4: user_id
+        reservation.setUser_id(currentUser.getId());
+    	//5: user_name
+        reservation.setUserName(currentUser.getName());
+    	//6: reason
+        reservation.setReason(reserve.getReason());//reserve
+    	//7: people_num
+        reservation.setPeopleNum(reserve.getPeopleNum());//reserve
+    	//8: reserved_date(예약 날짜)
+        reservation.setReservedDate(reserve.getReservedDate());//search
+    	//9: reserved_period(예약 교시)
+        reservation.setReservedPeriod(reserve.getReservedPeriod());//search
+    	//10: created_date(예약 요청 시간)
+        reservation.setCreatedDate(reserve.getCreatedDate());//reserve
         
+        insertReservation(reservation);
         
-        
+        return;
     }
+   
     
     public void insertReservation(ReservationDTO reservation) {//sql에 예약 내역 insert하는 함수(Reserve.java 화면에서 예약 버튼을 누를 시 실행)
     	String query = "INSERT INTO db2024_Reservation (reserved_id, room_id, admin_id, user_id, user_name, reason, people_num, reserved_date, reserved_period, created_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";

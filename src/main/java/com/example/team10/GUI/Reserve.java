@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.awt.EventQueue;
@@ -24,6 +25,10 @@ import java.awt.FlowLayout;
 import javax.swing.JTextField;
 import java.awt.Font;
 import javax.swing.border.TitledBorder;
+
+import main.java.com.example.team10.DAO.ReservationDAOImpl;
+import main.java.com.example.team10.DTO.ReservationDTO;
+
 import javax.swing.border.EtchedBorder;
 import javax.swing.DropMode;
 
@@ -33,12 +38,6 @@ public class Reserve extends JFrame {
 	private JTextField reasonTextField;
 	private JTextField peopleNumTextField;
 	private JLabel selectedClassroomLabel;
-	
-	// Database connection parameters
-    static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost:3306/db2024?serverTimezone=UTC";
-    static final String USER = "root";
-    static final String PASS = "root";
 
 	/**
 	 * Launch the application.
@@ -60,13 +59,17 @@ public class Reserve extends JFrame {
 	 * Create the application.
 	 */
 	public Reserve() {
-		initialize();
+		//initialize();
+	}
+	
+	public Reserve(long room_id, Date reserved_date, int reserved_period) {// 편리한 예약 생성을 위해 생성자 사용
+		initialize(room_id, reserved_date, reserved_period);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
+	private void initialize(long room_id, Date reserved_date, int reserved_period) {
 		setBounds(100, 100, 450, 300);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(new GridLayout(5, 1, 0, 0));
@@ -127,12 +130,21 @@ public class Reserve extends JFrame {
 		getContentPane().add(btnPanel);
 		
 		JButton reserveBtn = new JButton("예약");
+		reserveBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {//예약 버튼 누르면 예약 생성
+				sendReserveInfo(room_id,reserved_date,reserved_period);
+			}
+		});
 		btnPanel.add(reserveBtn);
 	}
 
-	
-	
-	private void insertReserveInfo() {//예약 버튼 누를 시
+	public void sendReserveInfo(long room_id, Date reserved_date, int reserved_period) {//예약 버튼 누를 시 받아온 값 전달
+		ReservationDTO reservation = new ReservationDTO(); //DTO 생성
+		//Search.java에서 받아온 값 집어넣기
+		reservation.setRoomId(room_id);
+		reservation.setReservedDate(reserved_date);
+		reservation.setReservedPeriod(reserved_period);
+		
 		String reason;
 		int people_num;
 		
@@ -156,13 +168,16 @@ public class Reserve extends JFrame {
 	        JOptionPane.showMessageDialog(this, "유효하지 않은 예약 인원입니다.", "오류", JOptionPane.ERROR_MESSAGE);
 	        return;
 	    }
+
+	    //Reserve에서 받은 값 전달하기
+	    reservation.setReason(reason);
+        reservation.setPeopleNum(people_num);
+        reservation.setCreatedDate(new Date());//예약 요청 날짜
 	    
-	    
-	    //INSERT INTO db2024_Reservation(reserved_id, room_id, admin_id, user_id,
-        //user_name, reason, people_num, reserved_date, reserved_period, created_date)
-//VALUES
-	   
-	    //insert 쿼리 작성중
-	    
+        System.out.println(reservation.getRoomId());//search 대표
+        System.out.println(reservation.getPeopleNum());//reserve 대표
+        
+        ReservationDAOImpl reservationDAO=new ReservationDAOImpl();//DAO 생성
+        reservationDAO.createReservation(reservation);
 	}
 }
