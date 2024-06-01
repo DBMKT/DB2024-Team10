@@ -6,11 +6,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.*;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.*;
@@ -20,6 +22,10 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
+
+import main.java.com.example.team10.DAO.ReservationDAOImpl;
+import main.java.com.example.team10.DTO.ReservationDTO;
+
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.EtchedBorder;
@@ -36,7 +42,7 @@ public class Search extends JFrame {
 
     // Database connection parameters
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost:3306/db2024?serverTimezone=UTC";
+    static final String DB_URL = "jdbc:mysql://localhost:3306/db2024team10?serverTimezone=UTC"; //db2024team10
     static final String USER = "root";
     static final String PASS = "root";
     
@@ -370,6 +376,8 @@ public class Search extends JFrame {
 				System.out.println("날짜: " + reservedDate);
 				System.out.println("교시: " + reservedPeriod);
 				System.out.println("선택한 교시: " + selectedPeriod);
+				
+				sendSearchInfo(buildingName,roomNum,reservedDate, selectedPeriod);//정보 보내기
 			}
 		});
 
@@ -524,4 +532,59 @@ public class Search extends JFrame {
 		}
 	}
 
+	public void sendSearchInfo(String buildingName, String roomNum,String reservedDate, String selectedPeriod) { //Reserve로 보내기   	
+    	//Reserve로 넘겨줄 값들 변환
+		//2: room_id
+    	long room_id=findRoomId(buildingName,roomNum);
+  
+    	//8: reserved_date(예약 날짜)
+    	SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+    	Date date;
+		try {//String->date
+			date = format.parse(reservedDate);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
+		
+		char firstChar = selectedPeriod.charAt(0);
+		int reserved_period = firstChar-'0';	
+		//System.out.println("Search 수행 완료");
+        
+        //new Reserve(room_id,date,reserved_period);//Reserve 창 생성하면서 넘겨주기(실행이 안 됨)
+	   
+	}
+	
+	// building, roomNum 알고 있음 -> classroom table에서 roomId 찾아야함
+	public long findRoomId(String buildingName, String roomNum) {
+	    long roomId = 0;
+
+	    String query = "SELECT room_id FROM db2024_Classroom WHERE building=? and room_num = ?";
+
+	    try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+	         PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+	        // building
+	        pstmt.setString(1, buildingName);
+	        // room_num
+	        pstmt.setString(2, roomNum);
+
+	        // 쿼리 실행
+	        ResultSet rs = pstmt.executeQuery();
+
+	        // 결과가 있을 경우 roomId 변수에 할당
+	        if (rs.next()) {
+	            roomId = rs.getLong("room_id");
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return roomId;
+	}
+
+	
+	
     }
