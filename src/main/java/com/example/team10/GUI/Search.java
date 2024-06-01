@@ -377,7 +377,7 @@ public class Search extends JFrame {
 				System.out.println("교시: " + reservedPeriod);
 				System.out.println("선택한 교시: " + selectedPeriod);
 				
-				sendSearchInfo(roomNum,reservedDate, selectedPeriod);//정보 보내기
+				sendSearchInfo(buildingName,roomNum,reservedDate, selectedPeriod);//정보 보내기
 			}
 		});
 
@@ -532,10 +532,10 @@ public class Search extends JFrame {
 		}
 	}
 
-	public void sendSearchInfo(String roomNum,String reservedDate, String selectedPeriod) { //Reserve로 보내기   	
+	public void sendSearchInfo(String buildingName, String roomNum,String reservedDate, String selectedPeriod) { //Reserve로 보내기   	
     	//Reserve로 넘겨줄 값들 변환
 		//2: room_id
-    	long room_id=Long.parseLong(selectedPeriod);
+    	long room_id=findRoomId(buildingName,roomNum);
   
     	//8: reserved_date(예약 날짜)
     	SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
@@ -548,16 +548,43 @@ public class Search extends JFrame {
 			return;
 		}
 		
-		try {
-			//9: reserved_period(예약 교시)
-			char firstChar = selectedPeriod.charAt(0);
-	        int reserved_period = Character.getNumericValue(firstChar);	
-	        
-	        new Reserve(room_id,date,reserved_period);//Reserve 창 생성하면서 넘겨주기
-		}catch(NumberFormatException e) {
-			e.printStackTrace();
-			return;
-		}
+		char firstChar = selectedPeriod.charAt(0);
+		int reserved_period = firstChar-'0';	
+		//System.out.println("Search 수행 완료");
+        
+        //new Reserve(room_id,date,reserved_period);//Reserve 창 생성하면서 넘겨주기(실행이 안 됨)
 	   
 	}
+	
+	// building, roomNum 알고 있음 -> classroom table에서 roomId 찾아야함
+	public long findRoomId(String buildingName, String roomNum) {
+	    long roomId = 0;
+
+	    String query = "SELECT room_id FROM db2024_Classroom WHERE building=? and room_num = ?";
+
+	    try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+	         PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+	        // building
+	        pstmt.setString(1, buildingName);
+	        // room_num
+	        pstmt.setString(2, roomNum);
+
+	        // 쿼리 실행
+	        ResultSet rs = pstmt.executeQuery();
+
+	        // 결과가 있을 경우 roomId 변수에 할당
+	        if (rs.next()) {
+	            roomId = rs.getLong("room_id");
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return roomId;
+	}
+
+	
+	
     }
