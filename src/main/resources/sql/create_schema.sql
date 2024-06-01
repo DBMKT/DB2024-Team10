@@ -57,7 +57,7 @@ CREATE TABLE db2024_Lecture( #DTO에 맞게 수정
 
 # 예약 테이블 생성
 CREATE TABLE db2024_Reservation(
-	reserved_id BIGINT NOT NULL,
+	reserved_id BIGINT NOT NULL AUTO_INCREMENT,
 	room_id BIGINT NOT NULL,
 	admin_id BIGINT NOT NULL,
 	user_id BIGINT NOT NULL,
