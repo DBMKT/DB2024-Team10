@@ -14,9 +14,8 @@ public class ReservationDTO {
     private int reserved_period;	// 예약 교시
     private Date created_date;  // 예약 요청 시간
 
-    public  ReservationDTO(long reserved_id, long room_id, long admin_id, long user_id, String user_name,
+    public ReservationDTO(long room_id, long admin_id, long user_id, String user_name,
             Date reserved_date, int reserved_period, String reason, int people_num, Date created_date) {
-    	this.reserved_id = reserved_id;
     	this.room_id = room_id;
 		this.admin_id = admin_id;
 		this.user_id = user_id;
