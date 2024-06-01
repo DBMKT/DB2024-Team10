@@ -133,6 +133,7 @@ public class Reserve extends JFrame {
 		reserveBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {//예약 버튼 누르면 예약 생성
 				sendReserveInfo(room_id,reserved_date,reserved_period);
+				System.out.println("예약 완료");
 			}
 		});
 		btnPanel.add(reserveBtn);
@@ -174,8 +175,8 @@ public class Reserve extends JFrame {
         reservation.setPeopleNum(people_num);
         reservation.setCreatedDate(new Date());//예약 요청 날짜
 	    
-        System.out.println(reservation.getRoomId());//search 대표
-        System.out.println(reservation.getPeopleNum());//reserve 대표
+        System.out.println(reservation.getRoomId());//search 대표(추후 삭제)
+        System.out.println(reservation.getPeopleNum());//reserve 대표(추후 삭제)
         
         ReservationDAOImpl reservationDAO=new ReservationDAOImpl();//DAO 생성
         reservationDAO.createReservation(reservation);
