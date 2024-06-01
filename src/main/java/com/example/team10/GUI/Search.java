@@ -44,7 +44,7 @@ public class Search extends JFrame {
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     static final String DB_URL = "jdbc:mysql://localhost:3306/db2024team10?serverTimezone=UTC"; //db2024team10
     static final String USER = "root";
-    static final String PASS = "@foreveryoung22";
+    static final String PASS = "root";
     
 	/**
 	 * Launch the application.
