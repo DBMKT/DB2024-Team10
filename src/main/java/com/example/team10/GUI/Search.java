@@ -44,7 +44,7 @@ public class Search extends JFrame {
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     static final String DB_URL = "jdbc:mysql://localhost:3306/db2024team10?serverTimezone=UTC"; //db2024team10
     static final String USER = "root";
-    static final String PASS = "root";
+    static final String PASS = "@foreveryoung22";
     
 	/**
 	 * Launch the application.
@@ -552,7 +552,7 @@ public class Search extends JFrame {
 		int reserved_period = firstChar-'0';	
 		//System.out.println("Search 수행 완료");
         
-        //new Reserve(room_id,date,reserved_period);//Reserve 창 생성하면서 넘겨주기(실행이 안 됨)
+        new Reserve(room_id,date,reserved_period).setVisible(true);//Reserve 창 생성하면서 넘겨주기(실행이 안 됨)
 	   
 	}
 	

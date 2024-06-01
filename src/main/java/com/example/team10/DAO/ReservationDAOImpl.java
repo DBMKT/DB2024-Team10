@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,20 @@ public class ReservationDAOImpl implements ReservationDAO {
     	ReservationDTO reservation=null;
     	
     	//1: reserved_id
-    	reservation.setReservedId();//어디서?
+    	int currentId=0;
+    	String findMaxId="SELECT max(reserved_id) FROM db2024_Reservation";
+    	
+    	try(Statement stmt1 = conn.createStatement();){ 
+    		ResultSet rs=stmt1.executeQuery(findMaxId);
+    		if(rs.next()) {
+    			currentId=rs.getInt("reserved_id");
+    		}
+    	}catch (SQLException e) {
+	        e.printStackTrace();
+	        return;
+	    }
+    	
+    	reservation.setReservedId(currentId+1);//현재 예약 테이블의 max 예약 id+1
     	
     	//2: room_id
     	reservation.setRoomId(reserve.getRoomId());//search
