@@ -9,7 +9,10 @@ import main.java.com.example.team10.util.SessionManager;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ReservationDAOImpl implements ReservationDAO {
@@ -98,5 +101,54 @@ public class ReservationDAOImpl implements ReservationDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+    }
+
+
+    public List<ReservationDTO> getReservationsByUserId(long userId) {
+
+        List<ReservationDTO> reservations = new ArrayList<>();
+
+        String query = "SELECT * FROM db2024_Reservation WHERE user_id = ?";
+
+
+
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
+
+            statement.setLong(1, userId);
+
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+
+                ReservationDTO reservation = new ReservationDTO();
+
+                reservation.setRoomId(rs.getLong("room_id"));
+
+                reservation.setUser_id(rs.getLong("user_id"));
+
+                reservation.setReason(rs.getString("reason"));
+
+                reservation.setPeopleNum(rs.getInt("people_num"));
+
+                reservation.setReservedDate(rs.getDate("reserved_date"));
+
+                reservation.setReservedPeriod(rs.getInt("reserved_period"));
+
+                reservation.setCreatedDate(rs.getDate("created_date"));
+
+                reservations.add(reservation);
+
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+        }
+
+
+
+        return reservations;
     }
 }
