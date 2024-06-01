@@ -6,14 +6,25 @@ import main.java.com.example.team10.DTO.ReservationDTO;
 
 public class ReserveTableModel extends AbstractTableModel {
     private List<ReservationDTO> reservations;
-    private final String[] columnNames = { "", "강의실 ID", "예약자 이름", "목적", "인원 수", "예약 날짜", "교시", "신청 날짜" };
+    private final String[] columnNames;
     private Boolean[] checkboxStates;
+    private boolean includeCheckbox;
 
     public ReserveTableModel(List<ReservationDTO> reservations) {
+    	this(reservations, true);
+
+    }
+    public ReserveTableModel(List<ReservationDTO> reservations, boolean includeCheckbox) {
         this.reservations = reservations;
+        this.includeCheckbox = includeCheckbox;
         this.checkboxStates = new Boolean[reservations.size()];
         for (int i = 0; i < checkboxStates.length; i++) {
             checkboxStates[i] = false; // 체크박스 초기값
+        }
+        if (includeCheckbox) {
+            this.columnNames = new String[]{ "", "강의실 ID", "예약자 이름", "목적", "인원 수", "예약 날짜", "교시", "신청 날짜" };
+        } else {
+            this.columnNames = new String[]{ "강의실 ID", "목적", "인원 수", "예약 날짜", "교시", "신청 날짜" };
         }
     }
 
@@ -48,31 +59,50 @@ public class ReserveTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         ReservationDTO reservation = reservations.get(rowIndex);
-        switch (columnIndex) {
-            case 0:
-                return checkboxStates[rowIndex];
-            case 1:
-                return reservation.getRoomId();
-            case 2:
-                return reservation.getUserName();
-            case 3:
-                return reservation.getReason();
-            case 4:
-                return reservation.getPeopleNum();
-            case 5:
-                return reservation.getReservedDate();
-            case 6:
-                return reservation.getReservedPeriod();
-            case 7:
-                return reservation.getCreatedDate();
-            default:
-                return null;
+        if (includeCheckbox) {
+	        switch (columnIndex) {
+	            case 0:
+	                return checkboxStates[rowIndex];
+	            case 1:
+	                return reservation.getRoomId();
+	            case 2:
+	                return reservation.getUserName();
+	            case 3:
+	                return reservation.getReason();
+	            case 4:
+	                return reservation.getPeopleNum();
+	            case 5:
+	                return reservation.getReservedDate();
+	            case 6:
+	                return reservation.getReservedPeriod();
+	            case 7:
+	                return reservation.getCreatedDate();
+	            default:
+	                return null;
+	        }
+        } else {
+        	switch (columnIndex) {
+	            case 0:
+	                return reservation.getRoomId();
+	            case 1:
+	                return reservation.getReason();
+	            case 2:
+	                return reservation.getPeopleNum();
+	            case 3:
+	                return reservation.getReservedDate();
+	            case 4:
+	                return reservation.getReservedPeriod();
+	            case 5:
+	                return reservation.getCreatedDate();
+	            default:
+	                return null;
+        	}
         }
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (columnIndex == 0) { // 체크박스 컬럼
+        if (includeCheckbox && columnIndex == 0) { // 체크박스 컬럼
             checkboxStates[rowIndex] = (Boolean) aValue;
             fireTableCellUpdated(rowIndex, columnIndex);
         }
@@ -80,7 +110,7 @@ public class ReserveTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        if (columnIndex == 0) {
+        if (includeCheckbox && columnIndex == 0) {
             return Boolean.class; // 체크박스 컬럼
         }
         return super.getColumnClass(columnIndex);
@@ -88,6 +118,6 @@ public class ReserveTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 0; // 체크박스 컬럼만 편집 가능
+        return includeCheckbox && columnIndex == 0; // 체크박스 컬럼만 편집 가능
     }
 }
