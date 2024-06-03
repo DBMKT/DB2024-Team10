@@ -47,20 +47,20 @@ public class Search extends JFrame {
     static final String PASS = "root";
     
 	/**
-	 * Launch the application.
+	 * 
 	 */
-	 public static void main(String[] args) { // 이 화면만 실행해볼 시 주석 해제
-	 	EventQueue.invokeLater(new Runnable() {
-	 		public void run() {
-	 			try {
-	 				Search window = new Search();
-	 				window.setVisible(true);
-	 			} catch (Exception e) {
-	 				e.printStackTrace();
-	 			}
-	 		}
-	 	});
-	 }
+	//  public static void main(String[] args) { // 이 화면만 실행해볼 시 주석 해제
+	//  	EventQueue.invokeLater(new Runnable() {
+	//  		public void run() {
+	//  			try {
+	//  				Search window = new Search();
+	//  				window.setVisible(true);
+	//  			} catch (Exception e) {
+	//  				e.printStackTrace();
+	//  			}
+	//  		}
+	//  	});
+	//  }
 
 	/**
 	 * Create the application.
