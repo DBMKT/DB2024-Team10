@@ -25,6 +25,7 @@ import com.toedter.calendar.JDateChooser;
 
 import main.java.com.example.team10.DAO.ReservationDAOImpl;
 import main.java.com.example.team10.DTO.ReservationDTO;
+import main.java.com.example.team10.util.JdbcUtil;
 
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
@@ -39,12 +40,6 @@ public class Search extends JFrame {
     private JComboBox<String> plugComboBox;
     private JRadioButton[] building_rdbtn;
     private JCheckBox buildingCheckBox, capacityCheckBox, plugCheckBox, micCheckBox, projectorCheckBox;
-
-    // Database connection parameters
-    static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost:3306/db2024team10?serverTimezone=UTC"; //db2024team10
-    static final String USER = "root";
-    static final String PASS = "root";
     
 	/**
 	 * 
@@ -427,7 +422,7 @@ public class Search extends JFrame {
 				(hasMic ? "AND c.hasMic = 1 " : "") +
 				(hasProjector ? "AND c.hasProjector = 1 " : "");
 
-		try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+		try (Connection conn = JdbcUtil.getConnection();
 			 PreparedStatement pstmt = conn.prepareStatement(query)) {
 
 			pstmt.setDate(1, sqlDate);
@@ -562,7 +557,7 @@ public class Search extends JFrame {
 
 	    String query = "SELECT room_id FROM db2024_Classroom WHERE building=? and room_num = ?";
 
-	    try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+	    try (Connection conn = JdbcUtil.getConnection();
 	         PreparedStatement pstmt = conn.prepareStatement(query)) {
 
 	        // building
