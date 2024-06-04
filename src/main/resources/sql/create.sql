@@ -2,9 +2,9 @@
 create database DB2024Team10;
 use DB2024Team10;
 
-# Database user 생성 + 권한 부여
-# create user 'DB2024Team10'@localhost identified by 'DB2024Team10';
-grant all privileges on DB2024Team10.* to 'DB2024Team10'@localhost;
+# Database user 생성 + 권한 부여 --> root 계정
+create user 'DB2024Team10'@localhost identified by 'DB2024Team10';
+grant all privileges on DB2024Team10.* to 'DB2024Team10'@localhost:3306;
 
 # 관리자 테이블 생성
 CREATE TABLE DB2024_Administrator( 
