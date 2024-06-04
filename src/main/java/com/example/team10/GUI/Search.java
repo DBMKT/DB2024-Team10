@@ -418,7 +418,7 @@ public class Search extends JFrame {
 				"AND (r.reserved_date IS NULL OR r.reserved_date = ?) " +
 				"LEFT JOIN db2024_Lecture l ON c.room_id = l.room_id " +
 				"WHERE c.building IN (" + String.join(",", Collections.nCopies(selectedBuildings.size(), "?")) + ") " +
-				"AND c.capacity >= ? AND c.plug_count >= ? " +
+				"AND c.room_id IN (SELECT room_id FROM db2024_Classroom WHERE capacity >= ? AND plug_count >= ?)" +
 				(hasMic ? "AND c.hasMic = 1 " : "") +
 				(hasProjector ? "AND c.hasProjector = 1 " : "");
 
