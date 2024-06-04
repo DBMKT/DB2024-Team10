@@ -71,5 +71,9 @@ CREATE TABLE DB2024_Reservation(
 	FOREIGN KEY (room_id) REFERENCES db2024_Classroom(room_id) ON DELETE CASCADE, # 외래키: 강의실 table의 강의 id
 	FOREIGN KEY (admin_id) REFERENCES db2024_Administrator(id) ON DELETE NO ACTION, # 외래키: 관리자 table의 관리자 id
 	FOREIGN KEY (user_id) REFERENCES db2024_User(id) ON DELETE CASCADE # 외래키: 사용자 table의 사용자 id
-    FOREIGN KEY (user_name) REFERENCES db2024_User(name) ON DELETE CASCADE; # 외래키: 사용자 table의 사용자 이름
 );
+
+# 예약 검색 뷰 생성
+CREATE VIEW DB2024_ReservationView AS
+SELECT reserved_id, room_id, reserved_date, reserved_period
+FROM db2024_Reservation;

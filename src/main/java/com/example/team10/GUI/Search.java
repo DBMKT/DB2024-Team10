@@ -414,7 +414,7 @@ public class Search extends JFrame {
 		String query = "SELECT c.building, c.room_num, c.capacity, c.plug_count, c.hasMic, c.hasProjector, " +
 				"r.reserved_date, r.reserved_period, l.day1_of_week, l.period1, l.day2_of_week, l.period2 " +
 				"FROM db2024_Classroom c " +
-				"LEFT JOIN db2024_Reservation r ON c.room_id = r.room_id " +
+				"LEFT JOIN db2024_ReservationView r ON c.room_id = r.room_id " +
 				"AND (r.reserved_date IS NULL OR r.reserved_date = ?) " +
 				"LEFT JOIN db2024_Lecture l ON c.room_id = l.room_id " +
 				"WHERE c.building IN (" + String.join(",", Collections.nCopies(selectedBuildings.size(), "?")) + ") " +
@@ -546,8 +546,9 @@ public class Search extends JFrame {
 		char firstChar = selectedPeriod.charAt(0);
 		int reserved_period = firstChar-'0';	
 		//System.out.println("Search 수행 완료");
-        
-        new Reserve(room_id,date,reserved_period).setVisible(true);//Reserve 창 생성하면서 넘겨주기(실행이 안 됨)
+
+		dispose();
+        new Reserve(room_id,date,reserved_period).setVisible(true);//Reserve 창 생성하면서 넘겨주기
 	
 	}
 	
