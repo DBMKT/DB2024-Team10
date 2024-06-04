@@ -25,6 +25,7 @@ import com.toedter.calendar.JDateChooser;
 
 import main.java.com.example.team10.DAO.ReservationDAOImpl;
 import main.java.com.example.team10.DTO.ReservationDTO;
+import main.java.com.example.team10.util.JdbcUtil;
 
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
@@ -39,28 +40,22 @@ public class Search extends JFrame {
     private JComboBox<String> plugComboBox;
     private JRadioButton[] building_rdbtn;
     private JCheckBox buildingCheckBox, capacityCheckBox, plugCheckBox, micCheckBox, projectorCheckBox;
-
-    // Database connection parameters
-    static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost:3306/db2024team10?serverTimezone=UTC"; //db2024team10
-    static final String USER = "root";
-    static final String PASS = "root";
     
 	/**
-	 * Launch the application.
+	 * 
 	 */
-	 public static void main(String[] args) { // 이 화면만 실행해볼 시 주석 해제
-	 	EventQueue.invokeLater(new Runnable() {
-	 		public void run() {
-	 			try {
-	 				Search window = new Search();
-	 				window.setVisible(true);
-	 			} catch (Exception e) {
-	 				e.printStackTrace();
-	 			}
-	 		}
-	 	});
-	 }
+	//  public static void main(String[] args) { // 이 화면만 실행해볼 시 주석 해제
+	//  	EventQueue.invokeLater(new Runnable() {
+	//  		public void run() {
+	//  			try {
+	//  				Search window = new Search();
+	//  				window.setVisible(true);
+	//  			} catch (Exception e) {
+	//  				e.printStackTrace();
+	//  			}
+	//  		}
+	//  	});
+	//  }
 
 	/**
 	 * Create the application.
@@ -427,7 +422,7 @@ public class Search extends JFrame {
 				(hasMic ? "AND c.hasMic = 1 " : "") +
 				(hasProjector ? "AND c.hasProjector = 1 " : "");
 
-		try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+		try (Connection conn = JdbcUtil.getConnection();
 			 PreparedStatement pstmt = conn.prepareStatement(query)) {
 
 			pstmt.setDate(1, sqlDate);
@@ -553,7 +548,7 @@ public class Search extends JFrame {
 		//System.out.println("Search 수행 완료");
         
         new Reserve(room_id,date,reserved_period).setVisible(true);//Reserve 창 생성하면서 넘겨주기(실행이 안 됨)
-	   
+	
 	}
 	
 	// building, roomNum 알고 있음 -> classroom table에서 roomId 찾아야함
@@ -562,7 +557,7 @@ public class Search extends JFrame {
 
 	    String query = "SELECT room_id FROM db2024_Classroom WHERE building=? and room_num = ?";
 
-	    try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+	    try (Connection conn = JdbcUtil.getConnection();
 	         PreparedStatement pstmt = conn.prepareStatement(query)) {
 
 	        // building

@@ -28,6 +28,9 @@ import javax.swing.border.TitledBorder;
 
 import main.java.com.example.team10.DAO.ReservationDAOImpl;
 import main.java.com.example.team10.DTO.ReservationDTO;
+import main.java.com.example.team10.DTO.UserDTO;
+import main.java.com.example.team10.util.JdbcUtil;
+import main.java.com.example.team10.util.SessionManager;
 
 import javax.swing.border.EtchedBorder;
 import javax.swing.DropMode;
@@ -39,22 +42,8 @@ public class Reserve extends JFrame {
 	private JTextField peopleNumTextField;
 	private JLabel selectedClassroomLabel;
 
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					Reserve window = new Reserve();
-//					window.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
-
+	private Connection conn;
+	
 	/**
 	 * Create the application.
 	 */
@@ -63,6 +52,8 @@ public class Reserve extends JFrame {
 	}
 	
 	public Reserve(long room_id, Date reserved_date, int reserved_period) {// 편리한 예약 생성을 위해 생성자 사용
+		this.conn=JdbcUtil.getConnection();
+			
 		initialize(room_id, reserved_date, reserved_period);
 	}
 
@@ -94,8 +85,27 @@ public class Reserve extends JFrame {
 		classroomLabel.setFont(new Font("굴림", Font.PLAIN, 16));
 		classroomPanel.add(classroomLabel);
 		
+		//room_id로 building name이랑 room number 찾기
+		String buildingName="";
+		int roomNum=0;
+		
+		String query = "SELECT building, room_num FROM DB2024_Classroom WHERE room_id=?";
+	    try {
+	        PreparedStatement pStmt = conn.prepareStatement(query);
+	        pStmt.setLong(1, room_id);
+	        ResultSet rs = pStmt.executeQuery();
+	        while (rs.next()) {
+	            buildingName = rs.getString(1);
+	            roomNum = rs.getInt(2);
+	        }
+	        rs.close();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+		
 		selectedClassroomLabel = new JLabel("강의실"); //선택된 강의실 데이터로 업데이트
 		selectedClassroomLabel.setFont(new Font("굴림", Font.PLAIN, 16));
+		selectedClassroomLabel.setText(buildingName+" "+roomNum);
 		classroomPanel.add(selectedClassroomLabel);
 		
 		JPanel reasonPanel = new JPanel();
@@ -130,16 +140,29 @@ public class Reserve extends JFrame {
 		getContentPane().add(btnPanel);
 		
 		JButton reserveBtn = new JButton("예약");
+		// 세션에 저장된 user 정보 불러오기
+	    UserDTO currentUser = SessionManager.getCurrentUser();
+	  //예약 가능한 사용자인지 확인
+		int available=checkUser(currentUser);
+		
 		reserveBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {//예약 버튼 누르면 예약 생성
-				sendReserveInfo(room_id,reserved_date,reserved_period);
-				System.out.println("예약 완료");
+				if(available==0) {//예약 불가 사용자
+					JOptionPane.showMessageDialog(null,"현재 예약하실 수 없습니다. 관리자에게 문의하세요.", "예약 불가 사용자", JOptionPane.ERROR_MESSAGE);
+					dispose();
+					return;
+				}
+				int end=sendReserveInfo(room_id,reserved_date,reserved_period);
+				if(end==1) {
+					dispose();
+					System.out.println("예약 완료");
+				}
 			}
 		});
 		btnPanel.add(reserveBtn);
 	}
-
-	public void sendReserveInfo(long room_id, Date reserved_date, int reserved_period) {//예약 버튼 누를 시 받아온 값 전달
+	
+	public int sendReserveInfo(long room_id, Date reserved_date, int reserved_period) {//예약 버튼 누를 시 받아온 값 전달
 		ReservationDTO reservation = new ReservationDTO(); //DTO 생성
 		//Search.java에서 받아온 값 집어넣기
 		reservation.setRoomId(room_id);
@@ -152,9 +175,9 @@ public class Reserve extends JFrame {
 		//txt필드에서 값 받아오기
 		reason=reasonTextField.getText();
 		//예약 목적 예외 처리
-		if(reason==null) {//예약 목적 미입력
+		if(reason == null || reason.equals("")) {//예약 목적 미입력
 			JOptionPane.showMessageDialog(this, "예약 목적을 입력하세요.", "오류", JOptionPane.ERROR_MESSAGE);
-			return;
+			return 0;
 		}
 		
 		//예약 인원 값 받아오기
@@ -162,12 +185,32 @@ public class Reserve extends JFrame {
 	        people_num = Integer.parseInt(peopleNumTextField.getText());
 	    } catch (NumberFormatException e) {
 	        JOptionPane.showMessageDialog(this, "올바른 예약 인원을 입력하세요.", "오류", JOptionPane.ERROR_MESSAGE);
-	        return;
+	        return 0;
 	    }
 		//예약 인원 음수
 	    if (people_num <= 0) {
 	        JOptionPane.showMessageDialog(this, "유효하지 않은 예약 인원입니다.", "오류", JOptionPane.ERROR_MESSAGE);
-	        return;
+	        return 0;
+	    }
+	    
+	    int capacity=0;
+		
+		String query = "SELECT capacity FROM DB2024_Classroom WHERE room_id=?";
+	    try {
+	        PreparedStatement pStmt = conn.prepareStatement(query);
+	        pStmt.setLong(1, room_id);
+	        ResultSet rs = pStmt.executeQuery();
+	        while (rs.next()) {
+	            capacity= rs.getInt(1);
+	        }
+	        rs.close();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    if(people_num>capacity) {//신청 인원이 강의실 수용인원 초과
+	    	JOptionPane.showMessageDialog(this, "예약 인원이 해당 강의실의 수용 인원보다 많습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+	        return 0;
 	    }
 
 	    //Reserve에서 받은 값 전달하기
@@ -180,5 +223,27 @@ public class Reserve extends JFrame {
         
         ReservationDAOImpl reservationDAO=new ReservationDAOImpl();//DAO 생성
         reservationDAO.createReservation(reservation);
+        
+        return 1;
 	}
+	
+	public int checkUser(UserDTO user) {//user table에서 예약 가능 여부 확인하기
+		String query="select canReserve from DB2024_User where id=?";
+		int canReserve=0;
+		PreparedStatement pStmt;
+		try {
+			pStmt = conn.prepareStatement(query);
+			pStmt.setLong(1, user.getId());
+			ResultSet rs=pStmt.executeQuery();
+			if (rs.next()) {
+				canReserve = rs.getInt(1);
+	        }
+			rs.close();
+			return canReserve;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
 }
