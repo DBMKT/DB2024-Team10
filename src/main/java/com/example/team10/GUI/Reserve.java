@@ -46,14 +46,14 @@ public class Reserve extends JFrame {
 		//initialize();
 	}
 	
-	public Reserve(long room_id, Date reserved_date, int reserved_period) {// 편리한 예약 생성을 위해 생성자 사용
-		initialize(room_id, reserved_date, reserved_period);
+	public Reserve(String buildingName, String roomNum,long room_id, Date reserved_date, int reserved_period) {// 편리한 예약 생성을 위해 생성자 사용
+		initialize(buildingName,roomNum,room_id, reserved_date, reserved_period);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize(long room_id, Date reserved_date, int reserved_period) {
+	private void initialize(String buildingName, String roomNum,long room_id, Date reserved_date, int reserved_period) {
 		setBounds(100, 100, 450, 300);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(new GridLayout(5, 1, 0, 0));
@@ -80,6 +80,7 @@ public class Reserve extends JFrame {
 		
 		selectedClassroomLabel = new JLabel("강의실"); //선택된 강의실 데이터로 업데이트
 		selectedClassroomLabel.setFont(new Font("굴림", Font.PLAIN, 16));
+		selectedClassroomLabel.setText(buildingName+" "+roomNum);
 		classroomPanel.add(selectedClassroomLabel);
 		
 		JPanel reasonPanel = new JPanel();
@@ -117,6 +118,7 @@ public class Reserve extends JFrame {
 		reserveBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {//예약 버튼 누르면 예약 생성
 				sendReserveInfo(room_id,reserved_date,reserved_period);
+				dispose();
 				System.out.println("예약 완료");
 			}
 		});
