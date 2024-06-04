@@ -36,11 +36,10 @@ public class ReservationDAOImpl implements ReservationDAO {
     public void createReservation(ReservationDTO reserve) {
 
     	//Search에서 정보 넘김-> Reserve에서 수합->createReservation으로 예약 생성->insertReservation에서 sql 처리
-    	//예약 인스턴스 생성
-    	ReservationDTO reservation= new ReservationDTO();
 
         try {
             conn.setAutoCommit(false); // 트랜잭션 시작
+
 
             // 세션에 저장된 user 정보 불러오기
             UserDTO currentUser = SessionManager.getCurrentUser();
@@ -49,6 +48,8 @@ public class ReservationDAOImpl implements ReservationDAO {
                 return;
             }
 
+        	//예약 인스턴스 생성
+        	ReservationDTO reservation= new ReservationDTO();
             //1: room_id
             reservation.setRoomId(reserve.getRoomId());//search
 
