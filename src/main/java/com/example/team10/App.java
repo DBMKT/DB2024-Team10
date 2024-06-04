@@ -24,7 +24,7 @@ public class App {
 //        
 //        // 사용자 로그인 test 코드
 		/*
-		 * UserDTO loginUser = userDAO.login(2171024, "tlstnwjd"); if(loginUser == null)
+		 * UserDTO loginUser = userDAO.login(2171024 , "tlstnwjd"); if(loginUser == null)
 		 * { System.out.println("로그인 실패: 잘못된 ID 혹은 비밀번호입니다.\n"); } else {
 		 * System.out.println("로그인 성공: "+loginUser.getId()); } // Check if user is
 		 * logged in if (SessionManager.isUserLoggedIn()) {

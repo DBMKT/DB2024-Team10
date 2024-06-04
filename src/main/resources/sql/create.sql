@@ -7,7 +7,7 @@ create user 'DB2024Team10'@localhost identified by 'DB2024Team10';
 grant all privileges on DB2024Team10.* to 'DB2024Team10'@localhost;
 
 # 관리자 테이블 생성
-CREATE TABLE db2024_Administrator( 
+CREATE TABLE DB2024_Administrator( 
     id BIGINT NOT NULL,
     password VARCHAR(20) NOT NULL,
     contact VARCHAR(20) NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE db2024_Administrator(
 );
 
 # 사용자 테이블 생성
-CREATE TABLE db2024_User(
+CREATE TABLE DB2024_User(
     id BIGINT NOT NULL,
     admin_id BIGINT,
     password VARCHAR(20) NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE db2024_User(
 );
 
 # 강의실 테이블 생성
-CREATE TABLE db2024_Classroom(
+CREATE TABLE DB2024_Classroom(
     room_id BIGINT NOT NULL,
     building VARCHAR(255) NOT NULL,
     room_num VARCHAR(255) NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE db2024_Classroom(
     );
 
 # 강의정보 테이블 생성
-CREATE TABLE db2024_Lecture( #DTO에 맞게 수정
+CREATE TABLE DB2024_Lecture( #DTO에 맞게 수정
     course_no INT(10) NOT NULL,
     class_no INT(2) NOT NULL,
     prof VARCHAR(20) NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE db2024_Lecture( #DTO에 맞게 수정
 );
 
 # 예약 테이블 생성
-CREATE TABLE db2024_Reservation(
+CREATE TABLE DB2024_Reservation(
 	reserved_id BIGINT NOT NULL AUTO_INCREMENT,
 	room_id BIGINT NOT NULL,
 	admin_id BIGINT NOT NULL,
