@@ -547,8 +547,8 @@ public class Search extends JFrame {
 		int reserved_period = firstChar-'0';	
 		//System.out.println("Search 수행 완료");
         
-        new Reserve(room_id,date,reserved_period).setVisible(true);//Reserve 창 생성하면서 넘겨주기(실행이 안 됨)
-	   
+        new Reserve(buildingName,roomNum,room_id,date,reserved_period).setVisible(true);//Reserve 창 생성하면서 넘겨주기(실행이 안 됨)
+	
 	}
 	
 	// building, roomNum 알고 있음 -> classroom table에서 roomId 찾아야함
