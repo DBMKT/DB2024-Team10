@@ -414,7 +414,7 @@ public class Search extends JFrame {
 		String query = "SELECT c.building, c.room_num, c.capacity, c.plug_count, c.hasMic, c.hasProjector, " +
 				"r.reserved_date, r.reserved_period, l.day1_of_week, l.period1, l.day2_of_week, l.period2 " +
 				"FROM db2024_Classroom c " +
-				"LEFT JOIN db2024_Reservation r ON c.room_id = r.room_id " +
+				"LEFT JOIN db2024_ReservationView r ON c.room_id = r.room_id " +
 				"AND (r.reserved_date IS NULL OR r.reserved_date = ?) " +
 				"LEFT JOIN db2024_Lecture l ON c.room_id = l.room_id " +
 				"WHERE c.building IN (" + String.join(",", Collections.nCopies(selectedBuildings.size(), "?")) + ") " +
