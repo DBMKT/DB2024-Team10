@@ -1,14 +1,11 @@
 package main.java.com.example.team10.DAO;
 
-import main.java.com.example.team10.DTO.AdministratorDTO;
 import main.java.com.example.team10.DTO.ReservationDTO;
+import main.java.com.example.team10.DTO.ClassroomDTO;
 import main.java.com.example.team10.DTO.UserDTO;
-import main.java.com.example.team10.GUI.Reserve;
-import main.java.com.example.team10.GUI.User.UserMyHome;
 import main.java.com.example.team10.util.JdbcUtil;
 import main.java.com.example.team10.util.SessionManager;
 
-import javax.swing.*;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -30,7 +27,34 @@ public class ReservationDAOImpl implements ReservationDAO {
         }
     }
 
+ // getClassroomByRoomId 메서드
+    @Override
+    public ClassroomDTO getClassroomByRoomId(long roomId) {
+        ClassroomDTO classroom = null;
+        String query = "SELECT * FROM db2024_Classroom WHERE room_id = ?";
 
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setLong(1, roomId);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                classroom = new ClassroomDTO(
+                    rs.getLong("room_id"),
+                    rs.getString("building"),
+                    rs.getString("room_num"),
+                    rs.getInt("capacity"),
+                    rs.getInt("plug_count"),
+                    rs.getBoolean("hasMic"),
+                    rs.getBoolean("hasProjector")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return classroom;
+    }
+    
     // 예약 생성 함수
     @Override
     public void createReservation(ReservationDTO reserve) {

@@ -20,5 +20,5 @@ public interface AdministratorDAO {
     
     List<ReservationDTO> searchReservationList(String keyword, List<String> selectedFields, int period, Date selectedDate); // 예약 내역 검색 기능
     
-    void deletePastReservations(); //이미 진행된 예약 내역 삭제
+    void deletePastReservations(); //이미 진행된 예약 내역 삭제z
 }

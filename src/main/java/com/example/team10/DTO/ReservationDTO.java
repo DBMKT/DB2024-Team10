@@ -13,6 +13,7 @@ public class ReservationDTO {
     private Date reserved_date;	// 예약 날짜
     private int reserved_period;	// 예약 교시
     private Date created_date;  // 예약 요청 시간
+    private ClassroomDTO classroom; // 강의실
 
     public ReservationDTO(){} //기본 생성자
 
@@ -101,5 +102,13 @@ public class ReservationDTO {
     }
     public void setCreatedDate(Date created_date) {
         this.created_date = created_date;
+    }
+    
+    public ClassroomDTO getClassroom() {
+        return classroom;
+    }
+    
+    public void setClassroom(ClassroomDTO classroom) {
+        this.classroom = classroom;
     }
 }

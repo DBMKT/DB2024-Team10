@@ -8,6 +8,7 @@ import java.util.List;
 import main.java.com.example.team10.DAO.ReservationDAO;
 import main.java.com.example.team10.DAO.ReservationDAOImpl;
 import main.java.com.example.team10.DTO.ReservationDTO;
+import main.java.com.example.team10.DTO.ClassroomDTO;
 import main.java.com.example.team10.DTO.UserDTO;
 import main.java.com.example.team10.GUI.Home;
 import main.java.com.example.team10.GUI.Admin.TableModel.ReserveTableModel;
@@ -77,6 +78,8 @@ public class MyReservations extends JFrame {
         List<ReservationDTO> reservations = reservationDAO.getReservationsByUserId(user.getId());
         for (ReservationDTO reservation : reservations) {
             reservation.setUserName(user.getName());
+            ClassroomDTO classroom = reservationDAO.getClassroomByRoomId(reservation.getRoomId());
+            reservation.setClassroom(classroom);
         }  
         reserveTableModel.setReservations(reservations);
     }
