@@ -40,7 +40,6 @@ public class ReservationDAOImpl implements ReservationDAO {
         try {
             conn.setAutoCommit(false); // 트랜잭션 시작
 
-
             // 세션에 저장된 user 정보 불러오기
             UserDTO currentUser = SessionManager.getCurrentUser();
             if (currentUser == null) {
