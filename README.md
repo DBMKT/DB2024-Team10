@@ -266,11 +266,11 @@
 
 
 
-### ReservationDAO.java
+## ReservationDAO.java
 
 `ReservationDAO` 인터페이스는 예약 관련 데이터베이스 작업을 정의하며, 예약과 관련된 데이터를 가져오거나 생성, 삽입하는 등의 기능을 제공하는 메서드를 선언합니다.
 
-#### 사용된 메서드
+### 사용된 메서드
 
 1. `getReservationsByUserId(long id)`
    - **기능**: 주어진 사용자 ID에 해당하는 모든 예약 내역을 가져옵니다.
@@ -300,9 +300,9 @@
 
 
 
-### ReservationDAOImpl.java
+## ReservationDAOImpl.java
 
-#### 클래스: `ReservationDAOImpl`
+### 클래스: `ReservationDAOImpl`
 
 `ReservationDAOImpl` 클래스는 `ReservationDAO` 인터페이스를 구현하며, 예약 관련 작업을 수행하는 클래스입니다.
 
