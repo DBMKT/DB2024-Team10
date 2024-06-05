@@ -87,7 +87,7 @@ public class Reserve extends JFrame {
 		
 		//room_id로 building name이랑 room number 찾기
 		String buildingName="";
-		int roomNum=0;
+		String roomNum="";
 		
 		String query = "SELECT building, room_num FROM DB2024_Classroom WHERE room_id=?";
 	    try {
@@ -96,7 +96,7 @@ public class Reserve extends JFrame {
 	        ResultSet rs = pStmt.executeQuery();
 	        while (rs.next()) {
 	            buildingName = rs.getString(1);
-	            roomNum = rs.getInt(2);
+	            roomNum = rs.getString(2);
 	        }
 	        rs.close();
 	    } catch (SQLException e) {
