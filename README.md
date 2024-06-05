@@ -5,35 +5,65 @@
 ├─bin
 
 │ └─main
+
 │ ├─java
+
 │ │ └─com
+
 │ │ └─example
+
 │ │ └─team10
+
 │ │ ├─DAO
+
 │ │ ├─DTO
+
 │ │ │ └─enums
+
 │ │ ├─GUI
+
 │ │ │ ├─Admin
+
 │ │ │ │ └─TableModel
+
 │ │ │ └─User
+
 │ │ └─util
+
 │ └─resources
+
 │ └─sql
+
 └─src
+
 └─main
+
 ├─java
+
 │ └─com
+
 │ └─example
+
 │ └─team10
+
 │ ├─DAO
+
 │ ├─DTO
+
 │ │ └─enums
+
 │ ├─GUI
+
 │ │ ├─Admin
+
 │ │ │ └─TableModel
+
 │ │ └─User
+
 │ └─util
+
 └─resources
+
 └─sql
 
 ## 메서드 및 클래스 설명
