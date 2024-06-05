@@ -3,6 +3,7 @@ package main.java.com.example.team10.GUI.Admin.TableModel;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import main.java.com.example.team10.DTO.ReservationDTO;
+import main.java.com.example.team10.DTO.ClassroomDTO;
 
 public class ReserveTableModel extends AbstractTableModel {
     private List<ReservationDTO> reservations;
@@ -14,6 +15,7 @@ public class ReserveTableModel extends AbstractTableModel {
     	this(reservations, true);
 
     }
+
     public ReserveTableModel(List<ReservationDTO> reservations, boolean includeCheckbox) {
         this.reservations = reservations;
         this.includeCheckbox = includeCheckbox;
@@ -22,9 +24,9 @@ public class ReserveTableModel extends AbstractTableModel {
             checkboxStates[i] = false; // 체크박스 초기값
         }
         if (includeCheckbox) {
-            this.columnNames = new String[]{ "", "강의실 ID", "예약자 이름", "목적", "인원 수", "예약 날짜", "교시", "신청 날짜" };
+            this.columnNames = new String[]{ "", "강의실ID", "예약자 이름", "목적", "인원 수", "예약 날짜", "교시", "신청 날짜" };
         } else {
-            this.columnNames = new String[]{ "강의실 ID", "목적", "인원 수", "예약 날짜", "교시", "신청 날짜" };
+            this.columnNames = new String[]{ "건물", "강의실 이름", "예약자 이름", "목적", "인원 수", "예약 날짜", "교시", "신청 날짜" };
         }
     }
 
@@ -59,45 +61,27 @@ public class ReserveTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         ReservationDTO reservation = reservations.get(rowIndex);
-        if (includeCheckbox) {
-	        switch (columnIndex) {
-	            case 0:
-	                return checkboxStates[rowIndex];
-	            case 1:
-	                return reservation.getRoomId();
-	            case 2:
-	                return reservation.getUserName();
-	            case 3:
-	                return reservation.getReason();
-	            case 4:
-	                return reservation.getPeopleNum();
-	            case 5:
-	                return reservation.getReservedDate();
-	            case 6:
-	                return reservation.getReservedPeriod();
-	            case 7:
-	                return reservation.getCreatedDate();
-	            default:
-	                return null;
-	        }
-        } else {
-        	switch (columnIndex) {
-	            case 0:
-	                return reservation.getRoomId();
-	            case 1:
-	                return reservation.getReason();
-	            case 2:
-	                return reservation.getPeopleNum();
-	            case 3:
-	                return reservation.getReservedDate();
-	            case 4:
-	                return reservation.getReservedPeriod();
-	            case 5:
-	                return reservation.getCreatedDate();
-	            default:
-	                return null;
-        	}
-        }
+        ClassroomDTO classroom = reservation.getClassroom();
+        switch (columnIndex) {
+        case 0:
+            return includeCheckbox ? checkboxStates[rowIndex] : classroom != null ? classroom.getBuilding() : "";
+        case 1:
+            return classroom != null ? classroom.getRoomNum() : reservation.getRoomId();
+        case 2:
+            return reservation.getUserName();
+        case 3:
+            return reservation.getReason();
+        case 4:
+            return reservation.getPeopleNum();
+        case 5:
+            return reservation.getReservedDate();
+        case 6:
+            return reservation.getReservedPeriod();
+        case 7:
+            return reservation.getCreatedDate();
+        default:
+            return null;
+    }
     }
 
     @Override

@@ -4,14 +4,14 @@ public class ClassroomDTO {
 
     private long room_id; 	// 강의실 id
     private String building;	// 건물 이름
-    private long room_num; // 호실
+    private String room_num; // 호실
     private int capacity;		// 수용 인원
     private int plug_count;	// 콘센트 개수
     private boolean hasMic;		// 마이크 여부
     private boolean hasProjector;	 // 빔 프로젝터 여부
 
     // 회원가입 시 생성자: 필수 필드만 포함
-    public ClassroomDTO(long room_id, String building, long room_num, int capacity,
+    public ClassroomDTO(long room_id, String building, String room_num, int capacity,
                         int plug_count, boolean hasMic, boolean hasProjector) {
         this.room_id = room_id;
         this.building = building;
@@ -22,7 +22,7 @@ public class ClassroomDTO {
         this.hasProjector = hasProjector;
     }
 
-    public static ClassroomDTO of (long room_id,String building,long room_num, int capacity, int plug_count,
+    public static ClassroomDTO of (long room_id,String building,String room_num, int capacity, int plug_count,
                                    boolean hasMic, boolean hasProjector){
         return new ClassroomDTO(room_id,building, room_num, capacity, plug_count, hasMic, hasProjector);
     }
@@ -36,10 +36,10 @@ public class ClassroomDTO {
     public void setBuilding(String building) {
         this.building = building;
     }
-    public long getRoomNum() {
+    public String getRoomNum() {
         return room_num;
     }
-    public void setRoomNum(long room_num) {
+    public void setRoomNum(String room_num) {
         this.room_num = room_num;
     }
     public int getCapacity() {
