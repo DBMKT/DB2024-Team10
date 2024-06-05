@@ -48,7 +48,7 @@ public class LoginForm extends JFrame {
 		int tfSize = 10;
 		Dimension btnSize = new Dimension(100, 20);
 		
-		jlabelId = new JLabel("ID");
+		jlabelId = new JLabel("ID(학번)");
 		jlabelId.setPreferredSize(jLabelSize);
 		jlabelPassword = new JLabel("비밀번호");
 		jlabelPassword.setPreferredSize(jLabelSize);
