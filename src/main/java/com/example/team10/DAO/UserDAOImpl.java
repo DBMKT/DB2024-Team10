@@ -103,7 +103,7 @@ public class UserDAOImpl implements UserDAO {
 			checkAndReconnect();
 			conn.setAutoCommit(false); // 트랜잭션 시작
 			
-			pStmt = conn.prepareStatement("SELECT * FROM db2024_user WHERE id = ? AND password = ?");
+			pStmt = conn.prepareStatement("SELECT * FROM db2024_user USE INDEX(idx_user) WHERE id = ? AND password = ?");
 			pStmt.setLong(1, id);
 			pStmt.setString(2, password);
 			res = pStmt.executeQuery();
@@ -150,7 +150,7 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public List<UserDTO> getUserListByAdminId(long adminId){
 		List<UserDTO> users = new ArrayList<>();
-		String sql = "SELECT * FROM db2024_User WHERE admin_id=?";
+		String sql = "SELECT * FROM db2024_UserView WHERE admin_id=?";
 		
         try (PreparedStatement pStmt = conn.prepareStatement(sql)) {
 			checkAndReconnect();

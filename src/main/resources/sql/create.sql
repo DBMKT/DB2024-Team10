@@ -77,3 +77,20 @@ CREATE TABLE DB2024_Reservation(
 CREATE VIEW DB2024_ReservationView AS
 SELECT reserved_id, room_id, reserved_date, reserved_period
 FROM db2024_Reservation;
+
+# 담당 사용자 조회 뷰 생성
+CREATE VIEW DB2024_UserView AS
+SELECT id, admin_id, name, major, email, phone_num, canReserve
+FROM db2024_User;
+
+# 로그인할 때, 해당 id, password를 가진 유저의 정보를 빠르게 반환하기 위한 인덱스
+CREATE INDEX idx_user ON DB2024Team10.DB2024_User(id, password);
+
+# 사용자가 자신의 예약 내역을 조회할 때, 예약 테이블에서 자신의 id와 user_id가 같은 예약 내역을 빠르게 반환하기 위해 이용하는 인덱스
+CREATE INDEX idx_check_reservation ON DB2024Team10.DB2024_Reservation(user_id);
+
+# 사용자가 예약 가능 강의실을 검색할 때, 해당 강의실의 강의 내역을 빠르게 반환하기 위해 이용하는 인덱스
+CREATE INDEX idx_lecture ON DB2024Team10.DB2024_Lecture(room_id);
+
+# 사용자가 예약 가능 강의실을 검색할 때, 선택한 건물명, 수용 인원에 맞는 예약 내역을 빠르게 반환하기 위해 이용하는 인덱스
+CREATE INDEX idx_classroom ON DB2024Team10.DB2024_Classroom(building, capacity);

@@ -155,7 +155,7 @@ public class ReservationDAOImpl implements ReservationDAO {
 
         List<ReservationDTO> reservations = new ArrayList<>();
 
-        String query = "SELECT * FROM db2024_Reservation WHERE user_id = ?";
+        String query = "SELECT * FROM db2024_Reservation USE INDEX(idx_check_reservation) WHERE user_id = ?";
 
 
 
