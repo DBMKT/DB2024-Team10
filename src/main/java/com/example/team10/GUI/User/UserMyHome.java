@@ -81,6 +81,7 @@ public class UserMyHome extends JFrame{
     	btnAddReservation.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                dispose();
                 new Search().setVisible(true);
             }
         });

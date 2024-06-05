@@ -2,9 +2,9 @@
 create database DB2024Team10;
 use DB2024Team10;
 
-# Database user 생성 + 권한 부여
+# Database user 생성 + 권한 부여 --> root 계정
 create user 'DB2024Team10'@localhost identified by 'DB2024Team10';
-grant all privileges on DB2024Team10.* to 'DB2024Team10'@localhost;
+grant all privileges on DB2024Team10.* to 'DB2024Team10'@localhost:3306;
 
 # 관리자 테이블 생성
 CREATE TABLE DB2024_Administrator( 
@@ -52,7 +52,7 @@ CREATE TABLE DB2024_Lecture(
     period2 INTEGER, # 두 번째 강의 교시(1~10) (1학점, 2학점 수업의 경우 null)
     room_id BIGINT NOT NULL, # 강의실 id (1학점, 2학점 수업의 경우 null)
     PRIMARY KEY(course_no, class_no), # 기본키: (학수번호, 분반)
-    FOREIGN KEY (room_id) REFERENCES db2024_Classroom(room_id) ON DELETE NO ACTION # 외래키: 강의실 table의 강의실 id(!!!!!!!!!!)
+    FOREIGN KEY (room_id) REFERENCES db2024_Classroom(room_id) ON DELETE NO ACTION # 외래키: 강의실 table의 강의실 id
 );
 
 # 예약 테이블 생성
@@ -68,7 +68,12 @@ CREATE TABLE DB2024_Reservation(
 	reserved_period INTEGER NOT NULL, # 예약 교시
 	created_date DATE NOT NULL, # 예약 요청 시간
 	PRIMARY KEY (reserved_id), # 기본키: 예약 id
-	FOREIGN KEY (room_id) REFERENCES db2024_Classroom(room_id) ON DELETE CASCADE, # 외래키: 강의실 table의 강의 id
+	FOREIGN KEY (room_id) REFERENCES db2024_Classroom(room_id) ON DELETE CASCADE, # 외래키: 강의실 table의 강의실 id
 	FOREIGN KEY (admin_id) REFERENCES db2024_Administrator(id) ON DELETE NO ACTION, # 외래키: 관리자 table의 관리자 id
 	FOREIGN KEY (user_id) REFERENCES db2024_User(id) ON DELETE CASCADE # 외래키: 사용자 table의 사용자 id
 );
+
+# 예약 검색 뷰 생성
+CREATE VIEW DB2024_ReservationView AS
+SELECT reserved_id, room_id, reserved_date, reserved_period
+FROM db2024_Reservation;

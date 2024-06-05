@@ -8,7 +8,7 @@ public class JdbcUtil {
 		
 		//JDBC driver name and database URL
 		final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-		final String DB_URL = "jdbc:mysql://localhost/db2024team10";
+		final String DB_URL = "jdbc:mysql://localhost:3306/db2024team10";
 		//Database credentials
 		//MySQL 계정과 암호 입력
 		final String USER = "DB2024Team10"; 
