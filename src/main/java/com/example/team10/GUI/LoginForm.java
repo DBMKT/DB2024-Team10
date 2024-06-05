@@ -37,18 +37,21 @@ public class LoginForm extends JFrame {
 		} else {
 			userDAO = new UserDAOImpl();
 		}		
-		init();
+		init(isAdmin);
 		setDisplay();
 		addListeners();
 		showFrame();
 	}
 	
-	public void init() {
+	public void init(boolean isAdmin) {
 		Dimension jLabelSize = new Dimension(80, 30);
 		int tfSize = 10;
 		Dimension btnSize = new Dimension(100, 20);
-		
-		jlabelId = new JLabel("ID(학번)");
+		if(isAdmin) {
+			jlabelId = new JLabel("ID");
+		} else {
+			jlabelId = new JLabel("ID(학번)");
+		}
 		jlabelId.setPreferredSize(jLabelSize);
 		jlabelPassword = new JLabel("비밀번호");
 		jlabelPassword.setPreferredSize(jLabelSize);
