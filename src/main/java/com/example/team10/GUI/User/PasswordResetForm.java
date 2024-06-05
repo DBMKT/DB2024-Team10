@@ -130,12 +130,11 @@ public class PasswordResetForm extends JFrame {
 					
 						if(res == 1) {
 							JOptionPane.showMessageDialog(PasswordResetForm.this,
-									"비밀번호 변경이 성공적으로 되었습니다.",
+									"비밀번호 변경이 성공적으로 되었습니다. 다시 로그인해주세요.",
 									"비밀번호 변경 폼",
 									JOptionPane.INFORMATION_MESSAGE);
 							userDAO.logout();
 							dispose();
-							new Home();
 						} else if(res == -1){
 							JOptionPane.showMessageDialog(PasswordResetForm.this,
 									"비밀번호 변경 실패: 기존 비밀번호가 일치하지 않습니다.",

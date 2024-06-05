@@ -1,4 +1,4 @@
-package main.java.com.example.team10.GUI;
+package main.java.com.example.team10.GUI.User;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
