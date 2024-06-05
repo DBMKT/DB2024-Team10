@@ -143,26 +143,33 @@ public class Reserve extends JFrame {
 		JButton reserveBtn = new JButton("예약");
 		// 세션에 저장된 user 정보 불러오기
 	    UserDTO currentUser = SessionManager.getCurrentUser();
-	  //예약 가능한 사용자인지 확인
-		int available=checkUser(currentUser);
-		
+	    
 		reserveBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {//예약 버튼 누르면 예약 생성
-				if(available==0) {//예약 불가 사용자
-					JOptionPane.showMessageDialog(null,"현재 예약하실 수 없습니다. 관리자에게 문의하세요.", "예약 불가 사용자", JOptionPane.ERROR_MESSAGE);
-					dispose();
-					new UserMyHome().setVisible(true);
-					return;
-				}
-				int end=sendReserveInfo(room_id,reserved_date,reserved_period);
-				if(end==1) {
-					dispose();
-					System.out.println("예약이 성공적으로 완료되었습니다.");
-					// 알림 창 표시
-					JOptionPane.showMessageDialog(null, "예약이 성공적으로 완료되었습니다.", "알림", JOptionPane.INFORMATION_MESSAGE);
-					new UserMyHome().setVisible(true);
-				}
-			}
+			  public void actionPerformed(ActionEvent e) { // 예약 버튼 누르면 예약 생성
+			        // 예약 가능한 사용자인지 확인
+			        int available = checkUser(currentUser);
+
+			        if (available == 0) { // 예약 불가 사용자일 경우
+			            System.out.println("예약 불가 사용자");
+			            String adminPhoneNum = getAdminPhoneNum(currentUser.getAdmin_id());
+			            JOptionPane.showMessageDialog(null, "현재 예약하실 수 없습니다. 관리자에게 문의하세요.\n 관리자 전화번호: " + adminPhoneNum, "예약 불가 사용자", JOptionPane.ERROR_MESSAGE);
+			            dispose();
+			            new UserMyHome().setVisible(true);
+			            return;
+			        } 
+			        else {
+			            System.out.println("예약 가능 사용자");
+			        }
+			        
+			        int end = sendReserveInfo(room_id, reserved_date, reserved_period);
+			        if (end == 1) {
+			            dispose();
+			            System.out.println("예약이 성공적으로 완료되었습니다.");
+			            // 알림 창 표시
+			            JOptionPane.showMessageDialog(null, "예약이 성공적으로 완료되었습니다.", "알림", JOptionPane.INFORMATION_MESSAGE);
+			            new UserMyHome().setVisible(true);
+			        }
+			    }
 		});
 		btnPanel.add(reserveBtn);
 	}
@@ -222,9 +229,6 @@ public class Reserve extends JFrame {
 	    reservation.setReason(reason);
         reservation.setPeopleNum(people_num);
         reservation.setCreatedDate(new Date());//예약 요청 날짜
-
-        System.out.println(reservation.getRoomId());//search 대표(추후 삭제)
-        System.out.println(reservation.getPeopleNum());//reserve 대표(추후 삭제)
         
         ReservationDAOImpl reservationDAO=new ReservationDAOImpl();//DAO 생성
         reservationDAO.createReservation(reservation);
@@ -251,4 +255,22 @@ public class Reserve extends JFrame {
 		return 0;
 	}
 	
+	public String getAdminPhoneNum(long admin_id) {//관리자 아이디로 관리자 연락처 찾는 함수
+		String query="select contact from db2024_Administrator where id=?";
+		String phoneNum="";
+		PreparedStatement pStmt;
+		try {
+			pStmt = conn.prepareStatement(query);
+			pStmt.setLong(1, admin_id);
+			ResultSet rs=pStmt.executeQuery();
+			if (rs.next()) {
+				phoneNum = rs.getString(1);
+	        }
+			rs.close();
+			return phoneNum;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return "관리자 연락처 확인 불가";
+	}
 }
