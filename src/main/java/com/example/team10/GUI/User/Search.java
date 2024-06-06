@@ -44,18 +44,18 @@ public class Search extends JFrame {
 	/**
 	 * 
 	 */
-	//  public static void main(String[] args) { // 이 화면만 실행해볼 시 주석 해제
-	//  	EventQueue.invokeLater(new Runnable() {
-	//  		public void run() {
-	//  			try {
-	//  				Search window = new Search();
-	//  				window.setVisible(true);
-	//  			} catch (Exception e) {
-	//  				e.printStackTrace();
-	//  			}
-	//  		}
-	//  	});
-	//  }
+	  public static void main(String[] args) { // 이 화면만 실행해볼 시 주석 해제
+	  	EventQueue.invokeLater(new Runnable() {
+	  		public void run() {
+	  			try {
+	  				Search window = new Search();
+	  				window.setVisible(true);
+	  			} catch (Exception e) {
+	  				e.printStackTrace();
+	  			}
+	  		}
+	  	});
+	  }
 
 	/**
 	 * Create the application.
@@ -386,29 +386,35 @@ public class Search extends JFrame {
 		List<String> selectedBuildings = new ArrayList<>();
 
 		if (buildingCheckBox.isSelected()) {
+			boolean flag = false;
 			// 선택된 건물들을 리스트에 추가
 			for (JRadioButton radioButton : building_rdbtn) {
 				if (radioButton.isSelected()) {
+					flag = true;
 					selectedBuildings.add(radioButton.getText());
 				}
 			}
-		}
-		
-		// 예외처리 먼저 -- 체크박스로 '건물'은 조건에 넣었으나, 정작 건물은 선택하지 않았을 경우
-		if(selectedBuildings.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "건물을 선택해주세요", "오류", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		// 건물 선택 체크박스가 선택되지 않은 경우
-		if (!buildingCheckBox.isSelected()) {
+			if(!flag) {
+				System.out.println("디버깅");
+				selectedBuildings.clear();
+				for(JRadioButton radioButton : building_rdbtn) {
+					selectedBuildings.add(radioButton.getText());
+				}
+			}
+		} else {
 			// 건물 선택 체크박스가 선택되지 않은 경우에는 모든 건물을 선택한 것으로 처리
 			selectedBuildings.clear(); // 선택된 건물 리스트를 비움
 			for (JRadioButton radioButton : building_rdbtn) {
 				selectedBuildings.add(radioButton.getText());
 			}
 		}
-	
+		System.out.println(selectedBuildings+ " ");
+				 
+		//예외처리 먼저 -- 
+		if(selectedBuildings.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "건물을 선택해주세요", "오류", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 
 		java.util.Date selectedDate = dateChooser.getDate();
 		java.sql.Date sqlDate = new java.sql.Date(selectedDate.getTime());
@@ -442,29 +448,33 @@ public class Search extends JFrame {
 		    boolean hasMic = micCheckBox.isSelected();
 		    boolean hasProjector = projectorCheckBox.isSelected();
 
-		String query = "SELECT c.building, c.room_num, c.capacity, c.plug_count, c.hasMic, c.hasProjector, " +
-				"r.reserved_date, r.reserved_period, l.day1_of_week, l.period1, l.day2_of_week, l.period2 " +
-				"FROM db2024_Classroom c USE INDEX(idx_classroom)" +
-				"LEFT JOIN db2024_ReservationView r ON c.room_id = r.room_id " +
-				"AND (r.reserved_date IS NULL OR r.reserved_date = ?) " +
-				"LEFT JOIN db2024_Lecture l USE INDEX(idx_lecture) ON c.room_id = l.room_id " +
-				"WHERE c.building IN (" + String.join(",", Collections.nCopies(selectedBuildings.size(), "?")) + ") " +
-				"AND c.room_id IN (SELECT room_id FROM db2024_Classroom WHERE capacity >= ? AND plug_count >= ?)" +
-				(hasMic ? "AND c.hasMic = 1 " : "") +
-				(hasProjector ? "AND c.hasProjector = 1 " : "");
+		    String query = "SELECT c.building, c.room_num, c.capacity, c.plug_count, c.hasMic, c.hasProjector, " +
+	                   "r.reserved_date, r.reserved_period, l.day1_of_week, l.period1, l.day2_of_week, l.period2 " +
+	                   "FROM db2024_Classroom c USE INDEX(idx_classroom) " +
+	                   "LEFT JOIN db2024_ReservationView r ON c.room_id = r.room_id " +
+	                   "AND (r.reserved_date IS NULL OR r.reserved_date = ?) " +
+	                   "LEFT JOIN db2024_Lecture l USE INDEX(idx_lecture) ON c.room_id = l.room_id " +
+	                   "WHERE c.building IN (" + String.join(",", Collections.nCopies(selectedBuildings.size(), "?")) + ") " +
+	                   "AND c.capacity >= ? AND c.plug_count >= ? " +
+	                   (hasMic ? "AND c.hasMic = 1 " : "") +
+	                   (hasProjector ? "AND c.hasProjector = 1 " : "");
 
-		try (Connection conn = JdbcUtil.getConnection();
-			 PreparedStatement pstmt = conn.prepareStatement(query)) {
+	    try (Connection conn = JdbcUtil.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-			pstmt.setDate(1, sqlDate);
-			int paramIndex = 2;
-			for (String building : selectedBuildings) {
-				pstmt.setString(paramIndex++, building);
-			}
-			pstmt.setInt(paramIndex++, capacity);
-			pstmt.setInt(paramIndex, plugCount);
+	        int paramIndex = 1;
+	        pstmt.setDate(paramIndex++, sqlDate);
+	        for (String building : selectedBuildings) {
+	            pstmt.setString(paramIndex++, building);
+	        }
+	        pstmt.setInt(paramIndex++, capacity);
+	        pstmt.setInt(paramIndex++, plugCount);
 
-			ResultSet rs = pstmt.executeQuery();
+	        // 디버깅 로그 추가
+//	        System.out.println("파라미터 인덱스: " + paramIndex);
+//	        System.out.println("SQL 쿼리: " + pstmt.toString());
+
+	        ResultSet rs = pstmt.executeQuery();
 			tableModel.setRowCount(0); // Clear existing results
 
 			// Map to hold room info and periods
@@ -554,7 +564,7 @@ public class Search extends JFrame {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 
