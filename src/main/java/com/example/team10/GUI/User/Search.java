@@ -41,32 +41,11 @@ public class Search extends JFrame {
     private JRadioButton[] building_rdbtn;
     private JCheckBox buildingCheckBox, capacityCheckBox, plugCheckBox, micCheckBox, projectorCheckBox;
     
-	/**
-	 * 
-	 */
-//	  public static void main(String[] args) { // 이 화면만 실행해볼 시 주석 해제
-//	  	EventQueue.invokeLater(new Runnable() {
-//	  		public void run() {
-//	  			try {
-//	  				Search window = new Search();
-//	  				window.setVisible(true);
-//	  			} catch (Exception e) {
-//	  				e.printStackTrace();
-//	  			}
-//	  		}
-//	  	});
-//	  }
 
-	/**
-	 * Create the application.
-	 */
 	public Search() {
 		initialize();
 	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
 	private void initialize() {
 		setTitle("예약 검색");
 		setSize(1000, 500); // 창 크기
@@ -79,7 +58,6 @@ public class Search extends JFrame {
 		getContentPane().add(reserve_panel, BorderLayout.SOUTH);
 		reserve_panel.setLayout(new GridLayout(3, 1, 0, 0));
 
-		
 		// 선택 정보 패널
 		JPanel select_panel = new JPanel();
 		FlowLayout fl_select_panel = (FlowLayout) select_panel.getLayout();
@@ -275,6 +253,7 @@ public class Search extends JFrame {
 		table.getColumnModel().getColumn(6).setPreferredWidth(100); // 날짜 열 너비 조정
 		table.getColumnModel().getColumn(7).setPreferredWidth(300); // 교시 열 너비 조정
 
+		// 표에서 항목 선택시
 		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
@@ -381,9 +360,9 @@ public class Search extends JFrame {
 		table_panel.add(scrollbar, BorderLayout.EAST);
 	}
 
-
+	// 검색 조건을 기반으로 데이터를 가져오는 함수
 	private void fetchSearchResults() {
-		List<String> selectedBuildings = new ArrayList<>();
+		List<String> selectedBuildings = new ArrayList<>(); // 선택된 강의 건물 목록
 
 		if (buildingCheckBox.isSelected()) {
 			boolean flag = false;
@@ -410,17 +389,20 @@ public class Search extends JFrame {
 		}
 		System.out.println(selectedBuildings+ " ");
 				 
-		//예외처리 먼저 -- 
+		// 예외 처리
 		if(selectedBuildings.isEmpty()) {
 			JOptionPane.showMessageDialog(this, "건물을 선택해주세요", "오류", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 
+		// 선택한 날짜 (필수)
 		java.util.Date selectedDate = dateChooser.getDate();
 		java.sql.Date sqlDate = new java.sql.Date(selectedDate.getTime());
 
+		// 수용인원
 		   int capacity = 0;
-		    if (capacityCheckBox.isSelected()) {
+		   // 수용인원을 조건으로 선택한 경우
+		   if (capacityCheckBox.isSelected()) {
 		        String capacityText = capacityTextField.getText().trim();
 		        if (capacityText.isEmpty()) {
 		            JOptionPane.showMessageDialog(this, "수용 인원을 입력해주세요.", "오류", JOptionPane.ERROR_MESSAGE);
@@ -433,8 +415,9 @@ public class Search extends JFrame {
 		            return;
 		        }
 		    }
-
+		// 콘센트 개수
 		    int plugCount = 0;
+		   // 콘센트 개수를 조건으로 선택한 경우
 		    if (plugCheckBox.isSelected()) {
 		        String plugText = (String) plugComboBox.getSelectedItem();
 		        try {
@@ -444,10 +427,20 @@ public class Search extends JFrame {
 		            return;
 		        }
 		    }
-
+		// 마이크 존재 여부
 		    boolean hasMic = micCheckBox.isSelected();
-		    boolean hasProjector = projectorCheckBox.isSelected();
+		// 빔 프로젝터 존재 여부
+			boolean hasProjector = projectorCheckBox.isSelected();
 
+			// 예약, 강의 테이블에 해당 강의실이 존재하는 경우
+			// 해당 조건을 만족하는 강의실의 정보를 불러오기 위한 쿼리
+			// c.building, c.room_num, c.capacity, c.plug_count, c.hasMic, c.hasProjector: 조건을 만족하는 강의실 정보
+			// r.reserved_date, r.reserved_period: 해당 강의실의 예약 정보
+			// l.day1_of_week, l.period1, l.day2_of_week, l.period2: 해당 강의실의 강의 정보
+			// 예약 가능한 강의실을 조회하는 쿼리문에 Reservation 테이블에서
+			// 예약자의 학번, 이름 등의 개인정보와 조회에 불필요한 속성을 제외한 뷰 ‘DB2024_ReservationView’를 이용
+			// 해당 강의실의 강의 내역을 빠르게 반환하기 위해 idx_lecture를 사용
+			// 선택한 건물명, 수용 인원에 맞는 예약 내역을 빠르게 반환하기 위해 idx_classroom을 사용
 		    String query = "SELECT c.building, c.room_num, c.capacity, c.plug_count, c.hasMic, c.hasProjector, " +
 	                   "r.reserved_date, r.reserved_period, l.day1_of_week, l.period1, l.day2_of_week, l.period2 " +
 	                   "FROM db2024_Classroom c USE INDEX(idx_classroom) " +
@@ -460,27 +453,24 @@ public class Search extends JFrame {
 	                   (hasProjector ? "AND c.hasProjector = 1 " : "");
 
 	    try (Connection conn = JdbcUtil.getConnection();
-	         PreparedStatement pstmt = conn.prepareStatement(query)) {
+			 PreparedStatement pstmt = conn.prepareStatement(query)) {
 
 	        int paramIndex = 1;
-	        pstmt.setDate(paramIndex++, sqlDate);
+	        pstmt.setDate(paramIndex++, sqlDate); // 선택한 날짜
 	        for (String building : selectedBuildings) {
-	            pstmt.setString(paramIndex++, building);
+	            pstmt.setString(paramIndex++, building); // 선택한 건물
 	        }
-	        pstmt.setInt(paramIndex++, capacity);
-	        pstmt.setInt(paramIndex++, plugCount);
-
-	        // 디버깅 로그 추가
-//	        System.out.println("파라미터 인덱스: " + paramIndex);
-//	        System.out.println("SQL 쿼리: " + pstmt.toString());
+	        pstmt.setInt(paramIndex++, capacity); // 선택한 수용 인원
+	        pstmt.setInt(paramIndex++, plugCount); // 선택한 콘센트 수
 
 	        ResultSet rs = pstmt.executeQuery();
-			tableModel.setRowCount(0); // Clear existing results
+			tableModel.setRowCount(0); // 테이블 선택 리셋
 
-			// Map to hold room info and periods
+			// 강의실 정보와 교시 정보를 매핑
 			Map<String, String> roomPeriodMap = new HashMap<>();
 
 			while (rs.next()) {
+				// select 결과 받아오기
 				String buildingName = rs.getString("building");
 				String roomNum = rs.getString("room_num");
 				int roomCapacity = rs.getInt("capacity");
@@ -493,9 +483,12 @@ public class Search extends JFrame {
 				int day2OfWeek = rs.getInt("day2_of_week");
 				int period2 = rs.getInt("period2");
 
+				// 건물 - 호실
 				String key = buildingName + "-" + roomNum;
+				// 교시별 예약 정보: 기본 o로 설정
 				String periodInfo = roomPeriodMap.getOrDefault(key, "1:o, 2:o, 3:o, 4:o, 5:o, 6:o, 7:o, 8:o, 9:o, 10:o");
 
+				// 이미 예약된 교시가 있으면 x 처리 (예약 테이블값)
 				if (period > 0) {
 					periodInfo = periodInfo.replace(period + ":o", period + ":x");
 				}
@@ -507,6 +500,7 @@ public class Search extends JFrame {
 				// 1: 일요일, 2: 월요일, ..., 7: 토요일 이라
 				// 1: 월요일, 2: 화요일, ..., 5: 금요일로 바꿔줌
 
+				// 강의에 사용되는 교시가 있으면 x 처리 (강의 테이블값)
 				if (dayOfWeek == day1OfWeek && period1 > 0) {
 					periodInfo = periodInfo.replace(period1 + ":o", period1 + ":x");
 				}
@@ -516,23 +510,25 @@ public class Search extends JFrame {
 
 				roomPeriodMap.put(key, periodInfo);
 
-				// If this is the first time we encounter this room, add the static info
+				// roomPeriodMap에 아무것도 없는 초기 상태일 때
 				if (!roomPeriodMap.containsKey(key + "-info")) {
 					tableModel.addRow(new Object[]{buildingName, roomNum, roomCapacity, roomPlugCount, roomHasMic ? "예" : "아니오",
 							roomHasProjector ? "예" : "아니오", sqlDate.toString(), periodInfo});
 					roomPeriodMap.put(key + "-info", periodInfo);  // Mark this room as added
 				} else {
-					// Update the period info for this room
+					// roomPeriodMap에 교시 정보가 업데이트 되었을 때
 					for (int row = 0; row < tableModel.getRowCount(); row++) {
+						// 검색 결과 테이블 업데이트
 						if (tableModel.getValueAt(row, 0).equals(buildingName) && tableModel.getValueAt(row, 1).equals(roomNum)) {
-							tableModel.setValueAt(periodInfo, row, 7);  // Update the period info
+							tableModel.setValueAt(periodInfo, row, 7);
 							break;
 						}
 					}
 				}
 			}
 
-			// Ensure all classrooms are included even if they have no reservations
+			// 예약, 강의 테이블에 해당 강의실이 존재하지 않는 경우
+			// 해당 조건을 만족하는 강의실의 정보를 불러오기 위한 쿼리
 			String classroomQuery = "SELECT building, room_num, capacity, plug_count, hasMic, hasProjector " +
 					"FROM db2024_Classroom WHERE building IN (" + String.join(",", Collections.nCopies(selectedBuildings.size(), "?")) + ") " +
 					"AND capacity >= ? AND plug_count >= ? " +
@@ -540,13 +536,14 @@ public class Search extends JFrame {
 			try (PreparedStatement classroomStmt = conn.prepareStatement(classroomQuery)) {
 				paramIndex = 1;
 				for (String building : selectedBuildings) {
-					classroomStmt.setString(paramIndex++, building);
+					classroomStmt.setString(paramIndex++, building); // 선택한 건물
 				}
-				classroomStmt.setInt(2, capacity);
-				classroomStmt.setInt(3, plugCount);
+				classroomStmt.setInt(2, capacity); // 선택한 수용 인원
+				classroomStmt.setInt(3, plugCount); // 선택한 콘센트 수
 				ResultSet classroomRs = classroomStmt.executeQuery();
 
 				while (classroomRs.next()) {
+					// select 결과 받아오기
 					String buildingName = classroomRs.getString("building");
 					String roomNum = classroomRs.getString("room_num");
 					int roomCapacity = classroomRs.getInt("capacity");
@@ -554,8 +551,10 @@ public class Search extends JFrame {
 					boolean roomHasMic = classroomRs.getBoolean("hasMic");
 					boolean roomHasProjector = classroomRs.getBoolean("hasProjector");
 
+					// 건물 - 호실
 					String key = buildingName + "-" + roomNum;
 					if (!roomPeriodMap.containsKey(key)) {
+						// 교시별 예약 정보: 기본 o로 설정
 						String periodInfo = "1:o, 2:o, 3:o, 4:o, 5:o, 6:o, 7:o, 8:o, 9:o, 10:o";
 						tableModel.addRow(new Object[]{buildingName, roomNum, roomCapacity, roomPlugCount, roomHasMic ? "예" : "아니오",
 								roomHasProjector ? "예" : "아니오", sqlDate.toString(), periodInfo});
