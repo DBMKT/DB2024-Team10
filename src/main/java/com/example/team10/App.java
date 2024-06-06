@@ -7,6 +7,7 @@ import main.java.com.example.team10.DAO.AdministratorDAOImpl;
 import main.java.com.example.team10.DTO.AdministratorDTO;
 import main.java.com.example.team10.DTO.UserDTO;
 import main.java.com.example.team10.GUI.Home;
+import main.java.com.example.team10.GUI.Landing;
 import main.java.com.example.team10.util.SessionManager;
 
 public class App {
@@ -87,7 +88,8 @@ public class App {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-            	new Home();
+            	//new Home();
+            	new Landing();
             }
         });
     }
