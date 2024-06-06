@@ -37,18 +37,21 @@ public class LoginForm extends JFrame {
 		} else {
 			userDAO = new UserDAOImpl();
 		}		
-		init();
+		init(isAdmin);
 		setDisplay();
 		addListeners();
 		showFrame();
 	}
 	
-	public void init() {
+	public void init(boolean isAdmin) {
 		Dimension jLabelSize = new Dimension(80, 30);
 		int tfSize = 10;
 		Dimension btnSize = new Dimension(100, 20);
-		
-		jlabelId = new JLabel("ID(학번)");
+		if(isAdmin) {
+			jlabelId = new JLabel("ID");
+		} else {
+			jlabelId = new JLabel("ID(학번)");
+		}
 		jlabelId.setPreferredSize(jLabelSize);
 		jlabelPassword = new JLabel("비밀번호");
 		jlabelPassword.setPreferredSize(jLabelSize);
@@ -133,6 +136,7 @@ public class LoginForm extends JFrame {
 	                                "로그인 실패: 잘못된 ID 또는 비밀번호",
 	                                "로그인폼",
 	                                JOptionPane.ERROR_MESSAGE);
+	                        dispose();
 						}
 					}
 					else {
@@ -143,14 +147,15 @@ public class LoginForm extends JFrame {
 							"로그인 성공: "+loginRequestUser.getName()+"님, 안녕하세요.",
 							"로그인폼",
 							JOptionPane.INFORMATION_MESSAGE);
-						dispose();
-						new UserMyHome();
+							dispose();
+							new UserMyHome();
 							// 로그인 성공 시 관리자 my home, 사용자 my home으로 이동
 						} else {
 							JOptionPane.showMessageDialog(LoginForm.this,
 							"로그인 실패: 잘못된 ID 또는 비밀번호",
 							"로그인폼",
 							JOptionPane.ERROR_MESSAGE);
+							dispose();
 						}
 					}
 				}
