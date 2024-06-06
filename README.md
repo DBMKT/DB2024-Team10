@@ -7,71 +7,25 @@
 
 
 ## 프로젝트 구조
-├─bin
-
+```bash
+├─src
 │ └─main
-
 │ ├─java
-
 │ │ └─com
-
 │ │ └─example
-
 │ │ └─team10
-
 │ │ ├─DAO
-
 │ │ ├─DTO
-
 │ │ │ └─enums
-
 │ │ ├─GUI
-
 │ │ │ ├─Admin
-
 │ │ │ │ └─TableModel
-
 │ │ │ └─User
-
 │ │ └─util
-
 │ └─resources
-
 │ └─sql
 
-└─src
-
-└─main
-
-├─java
-
-│ └─com
-
-│ └─example
-
-│ └─team10
-
-│ ├─DAO
-
-│ ├─DTO
-
-│ │ └─enums
-
-│ ├─GUI
-
-│ │ ├─Admin
-
-│ │ │ └─TableModel
-
-│ │ └─User
-
-│ └─util
-
-└─resources
-
-└─sql
-
-
+```
 
 
 
