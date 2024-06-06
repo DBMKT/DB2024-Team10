@@ -393,23 +393,54 @@ public class Search extends JFrame {
 				}
 			}
 		}
+		
+		// 예외처리 먼저 -- 체크박스로 '건물'은 조건에 넣었으나, 정작 건물은 선택하지 않았을 경우
+		if(selectedBuildings.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "건물을 선택해주세요", "오류", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 
 		// 건물 선택 체크박스가 선택되지 않은 경우
-		if (!buildingCheckBox.isSelected() || selectedBuildings.isEmpty()) {
+		if (!buildingCheckBox.isSelected()) {
 			// 건물 선택 체크박스가 선택되지 않은 경우에는 모든 건물을 선택한 것으로 처리
 			selectedBuildings.clear(); // 선택된 건물 리스트를 비움
 			for (JRadioButton radioButton : building_rdbtn) {
 				selectedBuildings.add(radioButton.getText());
 			}
 		}
+	
 
 		java.util.Date selectedDate = dateChooser.getDate();
 		java.sql.Date sqlDate = new java.sql.Date(selectedDate.getTime());
 
-		int capacity = capacityCheckBox.isSelected() ? Integer.parseInt(capacityTextField.getText()) : 0;
-		int plugCount = plugCheckBox.isSelected() ? Integer.parseInt((String) plugComboBox.getSelectedItem()) : 0;
-		boolean hasMic = micCheckBox.isSelected();
-		boolean hasProjector = projectorCheckBox.isSelected();
+		   int capacity = 0;
+		    if (capacityCheckBox.isSelected()) {
+		        String capacityText = capacityTextField.getText().trim();
+		        if (capacityText.isEmpty()) {
+		            JOptionPane.showMessageDialog(this, "수용 인원을 입력해주세요.", "오류", JOptionPane.ERROR_MESSAGE);
+		            return;
+		        }
+		        try {
+		            capacity = Integer.parseInt(capacityText);
+		        } catch (NumberFormatException e) {
+		            JOptionPane.showMessageDialog(this, "수용 인원은 숫자로 입력해주세요.", "오류", JOptionPane.ERROR_MESSAGE);
+		            return;
+		        }
+		    }
+
+		    int plugCount = 0;
+		    if (plugCheckBox.isSelected()) {
+		        String plugText = (String) plugComboBox.getSelectedItem();
+		        try {
+		            plugCount = Integer.parseInt(plugText);
+		        } catch (NumberFormatException e) {
+		            JOptionPane.showMessageDialog(this, "콘센트 개수는 숫자로 입력해주세요.", "오류", JOptionPane.ERROR_MESSAGE);
+		            return;
+		        }
+		    }
+
+		    boolean hasMic = micCheckBox.isSelected();
+		    boolean hasProjector = projectorCheckBox.isSelected();
 
 		String query = "SELECT c.building, c.room_num, c.capacity, c.plug_count, c.hasMic, c.hasProjector, " +
 				"r.reserved_date, r.reserved_period, l.day1_of_week, l.period1, l.day2_of_week, l.period2 " +
@@ -576,6 +607,7 @@ public class Search extends JFrame {
 
 	    } catch (SQLException e) {
 	        e.printStackTrace();
+	        JOptionPane.showMessageDialog(this, "데이터베이스 쿼리 실행 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
 	    }
 
 	    return roomId;
