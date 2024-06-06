@@ -98,20 +98,17 @@ public class UserManagement extends JFrame {
                 // 로그아웃 처리
                 adminDAO.logout();
                 dispose(); // 현재 창 닫기
-                new Home(); // 홈 화면 열기
             }
         });
         
         btnBack.addActionListener(e -> {
             dispose();
-            new AdminMyHome();
         });
         
         btnMyHome.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new AdminMyHome();
             }
         });
     }

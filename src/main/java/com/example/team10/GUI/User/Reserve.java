@@ -1,4 +1,4 @@
-package main.java.com.example.team10.GUI;
+package main.java.com.example.team10.GUI.User;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -29,7 +29,6 @@ import javax.swing.border.TitledBorder;
 import main.java.com.example.team10.DAO.ReservationDAOImpl;
 import main.java.com.example.team10.DTO.ReservationDTO;
 import main.java.com.example.team10.DTO.UserDTO;
-import main.java.com.example.team10.GUI.User.UserMyHome;
 import main.java.com.example.team10.util.JdbcUtil;
 import main.java.com.example.team10.util.SessionManager;
 

@@ -136,7 +136,8 @@ public class UserDAOImpl implements UserDAO {
 				}
 			}
 		} finally {
-			JdbcUtil.close(res);
+			if(res!=null)
+				JdbcUtil.close(res);
 			JdbcUtil.close(pStmt);
 			try {
 				conn.setAutoCommit(true); // 트랜잭션 종료
