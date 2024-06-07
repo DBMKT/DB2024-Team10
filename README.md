@@ -8,22 +8,36 @@
 
 ## 프로젝트 구조
 ```bash
-├─src
-│ └─main
-│ ├─java
-│ │ └─com
-│ │ └─example
-│ │ └─team10
-│ │ ├─DAO
-│ │ ├─DTO
-│ │ │ └─enums
-│ │ ├─GUI
-│ │ │ ├─Admin
-│ │ │ │ └─TableModel
-│ │ │ └─User
-│ │ └─util
-│ └─resources
-│ └─sql
+C:.
+├─.idea
+├─.settings
+├─bin
+│  └─main
+│      ├─java
+│      │  └─DB2024Team10
+│      │      ├─DAO
+│      │      ├─DTO
+│      │      ├─GUI
+│      │      │  ├─Admin
+│      │      │  │  └─TableModel
+│      │      │  └─User
+│      │      └─util
+│      └─resources
+│          └─sql
+└─src
+    └─main
+        ├─java
+        │  └─DB2024Team10
+        │      ├─DAO
+        │      ├─DTO
+        │      ├─GUI
+        │      │  ├─Admin
+        │      │  │  └─TableModel
+        │      │  └─User
+        │      └─util
+        └─resources
+            └─sql
+
 
 ```
 
